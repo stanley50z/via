@@ -87,6 +87,7 @@ const selectConnectedDevice =
           await dispatch(updateV3MenuData(connectedDevice));
         }
       } catch (e) {
+        console.error('[VIA] Loading lighting/menu data failed. Protocol:', protocol, 'Error:', e);
         dispatch(
           logAppError({
             message: 'Loading lighting/menu data failed',
@@ -139,16 +140,22 @@ export const reloadConnectedDevices =
     // Might be worth looking at whole store to work out which bits to store locally
     const supportedIds = getSupportedIds(state);
 
+    console.info('[VIA] Scanning for devices, forceRequest:', forceRequest, 'supportedIds count:', Object.keys(supportedIds).length);
+
     const recognisedDevices = await getRecognisedDevices(
       supportedIds,
       forceRequest,
     );
+
+    console.info('[VIA] Recognised devices:', recognisedDevices.length, recognisedDevices.map(d => `${d.productName} (vid=${d.vendorId}, pid=${d.productId})`));
 
     const protocolVersions = await Promise.all(
       recognisedDevices.map((device) =>
         new KeyboardAPI(device.path).getProtocolVersion(),
       ),
     );
+
+    console.info('[VIA] Protocol versions:', protocolVersions);
 
     const recognisedDevicesWithBadProtocol = recognisedDevices.filter(
       (_, i) => protocolVersions[i] === -1,

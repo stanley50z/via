@@ -16,6 +16,7 @@ import type {
   VendorProductIdMap,
 } from '../types/types';
 import {getVendorProductId} from './hid-keyboards';
+import {LOCAL_KEYBOARD_DEFINITIONS} from './local-definitions';
 let deviceStore: Store;
 const defaultStoreData = {
   definitionIndex: {
@@ -71,7 +72,30 @@ export async function syncStore(): Promise<DefinitionIndex> {
     const hash = document.getElementById('definition_hash')?.dataset.hash || '';
 
     if (hash === currentDefinitionIndex.hash) {
-      return currentDefinitionIndex;
+      // Even on cache hit, ensure local keyboard definitions are in the supported map
+      const cachedMap = currentDefinitionIndex.supportedVendorProductIdMap || {};
+      let needsUpdate = false;
+      for (const [vpidStr, info] of Object.entries(LOCAL_KEYBOARD_DEFINITIONS)) {
+        const vpid = Number(vpidStr);
+        if (!cachedMap[vpid]) {
+          needsUpdate = true;
+          cachedMap[vpid] = cachedMap[vpid] || {};
+          if (info.v2) {
+            cachedMap[vpid].v2 = true;
+            cachedMap[vpid].v3 = true;
+          }
+          if (info.v3) {
+            cachedMap[vpid].v3 = true;
+          }
+        }
+      }
+      if (needsUpdate) {
+        deviceStore.set('definitionIndex', {
+          ...currentDefinitionIndex,
+          supportedVendorProductIdMap: cachedMap,
+        });
+      }
+      return deviceStore.get('definitionIndex');
     }
     // Get definition index file
     const response = await fetch('/definitions/supported_kbs.json', {
@@ -98,6 +122,19 @@ export async function syncStore(): Promise<DefinitionIndex> {
       },
       v2vpidMap,
     );
+
+    // Merge local keyboard definitions into the supported map
+    for (const [vpidStr, info] of Object.entries(LOCAL_KEYBOARD_DEFINITIONS)) {
+      const vpid = Number(vpidStr);
+      vpidMap[vpid] = vpidMap[vpid] || {};
+      if (info.v2) {
+        vpidMap[vpid].v2 = true;
+        vpidMap[vpid].v3 = true; // v2 is a subset of v3
+      }
+      if (info.v3) {
+        vpidMap[vpid].v3 = true;
+      }
+    }
 
     const newIndex = {
       ...json,

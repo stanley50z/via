@@ -193,7 +193,7 @@ export const getSelectedKeyDefinitions = createSelector(
   getSelectedDefinition,
   getSelectedOptionKeys,
   (definition, optionKeys) => {
-    if (definition && optionKeys) {
+    if (definition && definition.layouts?.keys && optionKeys) {
       return definition.layouts.keys.concat(optionKeys);
     }
     return [];

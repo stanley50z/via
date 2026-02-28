@@ -1,0 +1,414 @@
+{
+  "name": "OS Keyboard",
+  "vendorProductId": 1330839554,
+  "firmwareVersion": 0,
+  "keycodes": ["qmk_lighting"],
+  "matrix": {
+    "rows": 10,
+    "cols": 6
+  },
+  "layouts": {
+    "width": 13,
+    "height": 7.25,
+    "optionKeys": {},
+    "keys": [
+      {"row": 0, "col": 0, "x": 0, "y": 0, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 0, "col": 1, "x": 1, "y": 0, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 0, "col": 2, "x": 2, "y": 0, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 0, "col": 3, "x": 3, "y": 0, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 0, "col": 4, "x": 4, "y": 0, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 0, "col": 5, "x": 5, "y": 0, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 5, "col": 0, "x": 7, "y": 0, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 5, "col": 1, "x": 8, "y": 0, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 5, "col": 2, "x": 9, "y": 0, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 5, "col": 3, "x": 10, "y": 0, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 5, "col": 4, "x": 11, "y": 0, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 5, "col": 5, "x": 12, "y": 0, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 1, "col": 0, "x": 0, "y": 1, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 1, "col": 1, "x": 1, "y": 1, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 1, "col": 2, "x": 2, "y": 1, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 1, "col": 3, "x": 3, "y": 1, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 1, "col": 4, "x": 4, "y": 1, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 1, "col": 5, "x": 5, "y": 1, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 6, "col": 0, "x": 7, "y": 1, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 6, "col": 1, "x": 8, "y": 1, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 6, "col": 2, "x": 9, "y": 1, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 6, "col": 3, "x": 10, "y": 1, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 6, "col": 4, "x": 11, "y": 1, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 6, "col": 5, "x": 12, "y": 1, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 2, "col": 0, "x": 0, "y": 2, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 2, "col": 1, "x": 1, "y": 2, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 2, "col": 2, "x": 2, "y": 2, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 2, "col": 3, "x": 3, "y": 2, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 2, "col": 4, "x": 4, "y": 2, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 2, "col": 5, "x": 5, "y": 2, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 7, "col": 0, "x": 7, "y": 2, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 7, "col": 1, "x": 8, "y": 2, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 7, "col": 2, "x": 9, "y": 2, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 7, "col": 3, "x": 10, "y": 2, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 7, "col": 4, "x": 11, "y": 2, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 7, "col": 5, "x": 12, "y": 2, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 3, "col": 0, "x": 0, "y": 3, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 3, "col": 1, "x": 1, "y": 3, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 3, "col": 2, "x": 2, "y": 3, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 3, "col": 3, "x": 3, "y": 3, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 3, "col": 4, "x": 4, "y": 3, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 3, "col": 5, "x": 5, "y": 3, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 8, "col": 0, "x": 7, "y": 3, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 8, "col": 1, "x": 8, "y": 3, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 8, "col": 2, "x": 9, "y": 3, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 8, "col": 3, "x": 10, "y": 3, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 8, "col": 4, "x": 11, "y": 3, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 8, "col": 5, "x": 12, "y": 3, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "alpha"},
+      {"row": 4, "col": 0, "x": 2, "y": 4.25, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "mod"},
+      {"row": 9, "col": 0, "x": 10, "y": 4.25, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "mod"},
+      {"row": 4, "col": 3, "x": 1, "y": 5.25, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "mod"},
+      {"row": 4, "col": 4, "x": 2, "y": 5.25, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "mod"},
+      {"row": 4, "col": 1, "x": 3, "y": 5.25, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "mod"},
+      {"row": 4, "col": 5, "x": 5, "y": 5.25, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "mod"},
+      {"row": 9, "col": 5, "x": 7, "y": 5.25, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "mod"},
+      {"row": 9, "col": 3, "x": 9, "y": 5.25, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "mod"},
+      {"row": 9, "col": 4, "x": 10, "y": 5.25, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "mod"},
+      {"row": 9, "col": 1, "x": 11, "y": 5.25, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "mod"},
+      {"row": 4, "col": 2, "x": 2, "y": 6.25, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "mod"},
+      {"row": 9, "col": 2, "x": 10, "y": 6.25, "r": 0, "rx": 0, "ry": 0, "d": false, "h": 1, "w": 1, "color": "mod"}
+    ]
+  },
+    "customKeycodes": [
+        {
+          "name": "Switch mode",
+         "title": "Switch between Keys mode and Mouse mode",
+         "shortName": "SWM"
+        },
+        {
+          "name": "Joystick Button 0",
+          "title": "Joystick Button 0",
+          "shortName": "JS_0"
+        },
+        {
+          "name": "Joystick Button 1",
+          "title": "Joystick Button 1",
+          "shortName": "JS_1"
+        },
+        {
+          "name": "Joystick Button 2",
+          "title": "Joystick Button 2",
+          "shortName": "JS_2"
+        },
+        {
+          "name": "Joystick Button 3",
+          "title": "Joystick Button 3",
+          "shortName": "JS_3"
+        },
+        {
+          "name": "Joystick Button 4",
+          "title": "Joystick Button 4",
+          "shortName": "JS_4"
+        },
+        {
+          "name": "Joystick Button 5",
+          "title": "Joystick Button 5",
+          "shortName": "JS_5"
+        },
+        {
+          "name": "Joystick Button 6",
+          "title": "Joystick Button 6",
+          "shortName": "JS_6"
+        },
+        {
+          "name": "Joystick Button 7",
+          "title": "Joystick Button 7",
+          "shortName": "JS_7"
+        },
+        {
+          "name": "Joystick Button 8",
+          "title": "Joystick Button 8",
+          "shortName": "JS_8"
+        },
+        {
+          "name": "Joystick Button 9",
+          "title": "Joystick Button 9",
+          "shortName": "JS_9"
+        },
+        {
+          "name": "Joystick Button 10",
+          "title": "Joystick Button 10",
+          "shortName": "JS_10"
+        },
+        {
+          "name": "Joystick Button 11",
+          "title": "Joystick Button 11",
+          "shortName": "JS_11"
+        },
+        {
+          "name": "Joystick Button 12",
+          "title": "Joystick Button 12",
+          "shortName": "JS_12"
+        },
+        {
+          "name": "Joystick Button 13",
+          "title": "Joystick Button 13",
+          "shortName": "JS_13"
+        },
+        {
+          "name": "Joystick Button 14",
+          "title": "Joystick Button 14",
+          "shortName": "JS_14"
+        },
+        {
+          "name": "Joystick Button 15",
+          "title": "Joystick Button 15",
+          "shortName": "JS_15"
+        },
+        {
+          "name": "Joystick Button 16",
+          "title": "Joystick Button 16",
+          "shortName": "JS_16"
+        },
+        {
+          "name": "Joystick Button 17",
+          "title": "Joystick Button 17",
+          "shortName": "JS_17"
+        },
+        {
+          "name": "Joystick Button 18",
+          "title": "Joystick Button 18",
+          "shortName": "JS_18"
+        },
+        {
+          "name": "Joystick Button 19",
+          "title": "Joystick Button 19",
+          "shortName": "JS_19"
+        },
+        {
+          "name": "Joystick Button 20",
+          "title": "Joystick Button 20",
+          "shortName": "JS_20"
+        },
+        {
+          "name": "Joystick Button 21",
+          "title": "Joystick Button 21",
+          "shortName": "JS_21"
+        },
+        {
+          "name": "Joystick Button 22",
+          "title": "Joystick Button 22",
+          "shortName": "JS_22"
+        },
+        {
+          "name": "Joystick Button 23",
+          "title": "Joystick Button 23",
+          "shortName": "JS_23"
+        },
+        {
+          "name": "Joystick Button 24",
+          "title": "Joystick Button 24",
+          "shortName": "JS_24"
+        },
+        {
+          "name": "Joystick Button 25",
+          "title": "Joystick Button 25",
+          "shortName": "JS_25"
+        },
+        {
+          "name": "Joystick Button 26",
+          "title": "Joystick Button 26",
+          "shortName": "JS_26"
+        },
+        {
+          "name": "Joystick Button 27",
+          "title": "Joystick Button 27",
+          "shortName": "JS_27"
+        },
+        {
+          "name": "Joystick Button 28",
+          "title": "Joystick Button 28",
+          "shortName": "JS_28"
+        },
+        {
+          "name": "Joystick Button 29",
+          "title": "Joystick Button 29",
+          "shortName": "JS_29"
+        },
+        {
+          "name": "Joystick Button 30",
+          "title": "Joystick Button 30",
+          "shortName": "JS_30"
+        },
+        {
+          "name": "Joystick Button 31",
+          "title": "Joystick Button 31",
+          "shortName": "JS_31"
+        }
+    ],
+    "menus": [
+      {
+        "label": "Joysticks",
+        "content": [
+          {
+            "label": "Features",
+            "content":[
+              {
+                "label": "Gaming Mode",
+                "type": "toggle",
+                "content": ["id_gaming_enabled", 0, 8]
+              },
+              {
+                "label": "Disable Win Key in Gaming Mode",
+                "type": "toggle",
+                "content": ["id_gaming_disable_win", 0, 19]
+              },
+              {
+                "label": "SOCD Mode",
+                "type": "dropdown",
+                "options": [
+                  ["OFF", 0],
+                  ["WASD", 1],
+                  ["ESDF", 2]
+                ],
+                "content": ["id_SOCD_mode", 0, 15]
+              },
+              {
+                "label": "8 way Mode",
+                "type": "dropdown",
+                "options": [
+                  ["WASD", 1],
+                  ["ESDF", 2]
+                ],
+                "content": ["id_8way_mode", 0, 16]
+              },
+              {
+                "label": "Left Mouse Sensitivity",
+                "type": "range",
+                "options": [67, 255],
+                "content": ["id_Lmouse_sens", 0, 17]
+              },
+              {
+                "label": "Right Mouse Sensitivity",
+                "type": "range",
+                "options": [67, 255],
+                "content": ["id_Rmouse_sens", 0, 18]
+              },
+              {
+                "label": "Joystick Key Activation Threshold (%)",
+                "type": "range",
+                "options": [15, 90],
+                "content": ["id_joystick_key_threshold", 0, 21]
+              },
+              {
+                "label": "Joystick Key Align Center?",
+                "type": "toggle",
+                "content": ["id_joystick_align_center", 0, 20]
+              },
+              {
+                "label": "Left Mode",
+                "type": "dropdown",
+                "options": [
+                  ["Mode 1: HID Joystick", 0],
+                  ["Mode 2: Keypad", 1],
+                  ["Mode 3: Pointing Device", 2],
+                  ["Mode 4: Gaming", 3]
+                ],
+                "content": ["id_joystick_Lmode", 0, 1]
+              },
+
+              {
+                "label": "Right Mode",
+                "type": "dropdown",
+                "options": [
+                  ["Mode 1: HID Joystick", 0],
+                  ["Mode 2: Keypad", 1],
+                  ["Mode 3: Pointing Device", 2]
+                ],
+                "content": ["id_joystick_Rmode", 0, 2]
+              },
+              {
+                "label": "Re-center Joystick",
+                "type": "button",
+                "options": [10],
+                "content": ["id_joystick_recenter", 0, 13]
+              }
+            ]
+          },
+          {
+              "label": "Core",
+              "content": [
+                {
+                  "label": "Legacy Mode?",
+                  "type": "toggle",
+                  "content": ["id_is_legacy", 0, 24]
+                },
+                {
+                "label": "Left Key Count",
+                "type": "dropdown",
+                "options": [
+                  ["1", 1],
+                  ["2", 2],
+                  ["3", 3],
+                  ["4", 4],
+                  ["5", 5],
+                  ["6", 6],
+                  ["7", 7],
+                  ["8", 8]
+                ],
+                "content": ["id_joystick_Lkeycount", 0, 3]
+                },
+                {
+                  "label": "Right Key Count",
+                  "type": "dropdown",
+                  "options": [
+                    ["1", 1],
+                    ["2", 2],
+                    ["3", 3],
+                    ["4", 4],
+                    ["5", 5],
+                    ["6", 6],
+                    ["7", 7],
+                    ["8", 8]
+                  ],
+                  "content": ["id_joystick_Rkeycount", 0, 4]
+                },
+                {
+                  "label": "Left Joystick Flip X?",
+                  "type": "toggle",
+                  "content": ["id_joystick_LxFlip", 0, 9]
+                },
+                {
+                  "label": "Left Joystick Flip Y?",
+                  "type": "toggle",
+                  "content": ["id_joystick_LyFlip", 0, 10]
+                },
+                {
+                  "label": "Left Joystick Swap X/Y?",
+                  "type": "toggle",
+                  "content": ["id_joystick_Lxy_swap", 0, 22]
+                },
+                {
+                  "label": "Right Joystick Flip X?",
+                  "type": "toggle",
+                  "content": ["id_joystick_RxFlip", 0, 11]
+                },
+                {
+                  "label": "Right Joystick Flip Y?",
+                  "type": "toggle",
+                  "content": ["id_joystick_RyFlip", 0, 12]
+                },
+                {
+                  "label": "Right Joystick Swap X/Y?",
+                  "type": "toggle",
+                  "content": ["id_joystick_Rxy_swap", 0, 23]
+                },
+                {
+                  "label": "Reset to EEPROM Defaults",
+                  "type": "button",
+                  "options": [10],
+                  "content": ["id_eeprom_default", 0, 25]
+                }
+            ]
+          }
+        ]
+      },
+      "qmk_rgblight"
+
+    ]
+}

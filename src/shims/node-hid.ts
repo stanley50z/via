@@ -113,6 +113,7 @@ const ExtendedHID = {
     productName: string = '';
     path: string = '';
     openPromise: Promise<void> = Promise.resolve();
+    _listenersAttached: boolean = false;
     constructor(path: string) {
       this._hidDevice = ExtendedHID._cache[path];
       // TODO: seperate open attempt from constructor as it's async
@@ -127,24 +128,34 @@ const ExtendedHID = {
         globalBuffer[this.path] = globalBuffer[this.path] || [];
         eventWaitBuffer[this.path] = eventWaitBuffer[this.path] || [];
         inputReportHandlers[this.path] = inputReportHandlers[this.path] || [];
-        if (!this._hidDevice._device.opened) {
-          this.open();
-        }
+        // Always attempt to open — don't trust the .opened flag across page loads
+        this.open();
       } else {
         throw new Error('Missing hid device in cache');
       }
     }
     async open() {
-      if (this._hidDevice && !this._hidDevice._device.opened) {
-        this.openPromise = this._hidDevice._device.open();
-        this.setupListeners();
-        await this.openPromise;
+      if (this._hidDevice) {
+        try {
+          if (!this._hidDevice._device.opened) {
+            this.openPromise = this._hidDevice._device.open();
+            this.setupListeners();
+            await this.openPromise;
+          } else {
+            // Device reports as open — attach listeners if not already done
+            this.setupListeners();
+          }
+        } catch (e) {
+          console.warn('Failed to open HID device, will retry on write:', e);
+          // Reset openPromise so write() can retry
+          this.openPromise = Promise.resolve();
+        }
       }
-      return Promise.resolve();
     }
     // Should we unsubscribe at some point of time
     setupListeners() {
-      if (this._hidDevice) {
+      if (this._hidDevice && !this._listenersAttached) {
+        this._listenersAttached = true;
         this._hidDevice._device.addEventListener('inputreport', (e) => {
           const message = new Uint8Array(e.data.buffer);
           const wasHandled = inputReportHandlers[this.path].some((handler) =>
@@ -208,9 +219,18 @@ const ExtendedHID = {
     }
 
     async write(arr: number[]) {
-      await this.openPromise;
+      // Ensure the device is open before writing
+      try {
+        await this.openPromise;
+      } catch {
+        // openPromise was rejected from a previous attempt — will retry below
+      }
+      // Defensive: if the device isn't actually open, attempt to re-open
       if (this._hidDevice && !this._hidDevice._device.opened) {
-        await this.open();
+        console.info('HID device not open, attempting to re-open before write');
+        this.openPromise = this._hidDevice._device.open();
+        this.setupListeners();
+        await this.openPromise;
       }
       const data = new Uint8Array(arr.slice(1));
       lastWriteTimestamp = Date.now();

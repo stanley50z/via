@@ -1,0 +1,6 @@
+timestamp, productName, vendorId, productId, message
+10:47:51.108, OS Keyboard, 0x4F53, 0x0002, "InvalidStateError: The device must be opened first.
+    at HID2.write (http://localhost:5173/src/shims/node-hid.ts:139:38)
+    at async KeyboardAPI._hidCommand (http://localhost:5173/src/utils/keyboard-api.ts:495:5)
+    at async KeyboardAPI.flushQueue (http://localhost:5173/src/utils/keyboard-api.ts:470:23)"
+10:47:51.111, OS Keyboard, 0x4F53, 0x0002, "Received invalid protocol version from device"
