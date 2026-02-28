@@ -2,6 +2,7 @@ import {
   faBrush,
   faBug,
   faTerminal,
+  faGamepad,
   faGear,
   faKeyboard,
   faStethoscope,
@@ -9,6 +10,7 @@ import {
 import {ConfigurePane} from '../components/panes/configure';
 import {Debug} from '../components/panes/debug';
 import {DesignTab} from '../components/panes/design';
+import {Joystick} from '../components/panes/joystick';
 import {Settings} from '../components/panes/settings';
 import {Test} from '../components/panes/test';
 import {ErrorsPaneConfig} from '../components/panes/errors';
@@ -21,6 +23,13 @@ export default [
     icon: faKeyboard,
     title: 'Configure',
     path: '/',
+  },
+  {
+    key: 'joystick',
+    component: Joystick,
+    icon: faGamepad,
+    title: 'Joystick',
+    path: '/joystick',
   },
   {
     key: 'test',
