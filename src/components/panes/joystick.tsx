@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {Pane} from './pane';
 import {useAppSelector} from 'src/store/hooks';
 import {getSelectedKeyboardAPI} from 'src/store/devicesSlice';
+import {SpeedCurveEditor} from './speed-curve-editor';
 
 // Custom menu channel and IDs for joystick modes (from keyboard definition)
 const JOYSTICK_CHANNEL = 0;
@@ -18,7 +19,8 @@ const JoystickPane = styled(Pane)`
   max-width: 100vw;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  overflow-y: auto;
+  padding-bottom: 40px;
 `;
 
 const JoystickContainer = styled.div`
@@ -74,6 +76,15 @@ const Title = styled.h2`
   font-size: 24px;
   font-weight: 400;
   margin: 0 0 8px 0;
+`;
+
+const Divider = styled.hr`
+  width: 80%;
+  max-width: 600px;
+  border: none;
+  border-top: 1px solid var(--color_accent);
+  opacity: 0.2;
+  margin: 16px 0;
 `;
 
 const CIRCLE_RADIUS = 120;
@@ -361,6 +372,8 @@ export const Joystick: FC = () => {
         <JoystickCircle position={leftPos} label="Left Joystick" />
         <JoystickCircle position={rightPos} label="Right Joystick" />
       </JoystickContainer>
+      <Divider />
+      <SpeedCurveEditor api={api} />
     </JoystickPane>
   );
 };
