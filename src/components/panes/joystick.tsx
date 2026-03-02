@@ -9,7 +9,10 @@ import {SpeedCurveEditor} from './speed-curve-editor';
 const JOYSTICK_CHANNEL = 0;
 const LEFT_MODE_ID = 1;
 const RIGHT_MODE_ID = 2;
-const HID_JOYSTICK_MODE = 0; // Mode 0 = HID Joystick
+const MOUSE_MODE = 2; // Mode 2 = Pointing Device (mouse)
+const RAW_AXES_ID = 32; // 4 bytes: signed percentages [Lx, Ly, Rx, Ry]
+const LEFT_SENS_ID = 17;
+const RIGHT_SENS_ID = 18;
 
 type JoystickPosition = {x: number; y: number};
 
@@ -85,6 +88,41 @@ const Divider = styled.hr`
   border-top: 1px solid var(--color_accent);
   opacity: 0.2;
   margin: 16px 0;
+`;
+
+const SensContainer = styled.div`
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 0 40px;
+`;
+
+const SensGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 200px;
+`;
+
+const SensLabel = styled.div`
+  color: var(--color_label);
+  font-size: 14px;
+  font-weight: 500;
+`;
+
+const SensValue = styled.div`
+  color: var(--color_label);
+  font-size: 13px;
+  font-family: monospace;
+  opacity: 0.7;
+`;
+
+const SensSlider = styled.input`
+  width: 200px;
+  accent-color: var(--color_accent);
 `;
 
 const CIRCLE_RADIUS = 120;
@@ -173,7 +211,7 @@ const JoystickCircle: FC<{
         />
       </svg>
       <CoordLabel>
-        X: {position.x.toFixed(3)} &nbsp; Y: {position.y.toFixed(3)}
+        X: {Math.round(position.x * 100)}% &nbsp; Y: {Math.round(position.y * 100)}%
       </CoordLabel>
     </JoystickWrapper>
   );
@@ -184,26 +222,26 @@ export const Joystick: FC = () => {
 
   const [leftPos, setLeftPos] = useState<JoystickPosition>({x: 0, y: 0});
   const [rightPos, setRightPos] = useState<JoystickPosition>({x: 0, y: 0});
-  const [gamepadConnected, setGamepadConnected] = useState(false);
-  const [gamepadName, setGamepadName] = useState<string>('');
+  const [connected, setConnected] = useState(false);
   const [modeStatus, setModeStatus] = useState<string>('');
+  const [leftSens, setLeftSens] = useState(128);
+  const [rightSens, setRightSens] = useState(128);
 
   const prevLeftModeRef = useRef<number | null>(null);
   const prevRightModeRef = useRef<number | null>(null);
-  const animFrameRef = useRef<number>(0);
-  const isActiveRef = useRef(true);
+  const pollingRef = useRef(false);
+  const cancelledRef = useRef(false);
 
-  // Set joystick modes to HID Joystick on mount, restore on unmount
+  // Set joystick modes to Mouse on mount, restore on unmount
   useEffect(() => {
     if (!api) return;
 
-    let cancelled = false;
+    cancelledRef.current = false;
 
-    const activateRawMode = async () => {
+    const activateMouseMode = async () => {
       try {
         setModeStatus('Reading current joystick modes...');
 
-        // Read current modes
         const leftModeRes = await api.getCustomMenuValue([
           JOYSTICK_CHANNEL,
           LEFT_MODE_ID,
@@ -213,56 +251,63 @@ export const Joystick: FC = () => {
           RIGHT_MODE_ID,
         ]);
 
-        // getCustomMenuValue returns res.slice(commandBytes.length)
-        // For commandBytes [0, 1], response is [command, channel, id, value, ...]
-        // After slicing by commandBytes.length (2), we get [id, value, ...]
-        // So the actual value is at index 1 (index 0 is the echoed id)
         const leftMode = leftModeRes[1];
         const rightMode = rightModeRes[1];
 
-        if (cancelled) return;
+        if (cancelledRef.current) return;
 
         prevLeftModeRef.current = leftMode;
         prevRightModeRef.current = rightMode;
 
         setModeStatus(
-          `Previous modes — Left: ${getModeName(leftMode)}, Right: ${getModeName(rightMode)}. Switching to HID Joystick...`,
+          `Previous modes — Left: ${getModeName(leftMode)}, Right: ${getModeName(rightMode)}. Switching to Mouse mode...`,
         );
 
-        // Set both to HID Joystick mode (mode 0)
-        if (leftMode !== HID_JOYSTICK_MODE) {
+        if (leftMode !== MOUSE_MODE) {
           await api.setCustomMenuValue(
             JOYSTICK_CHANNEL,
             LEFT_MODE_ID,
-            HID_JOYSTICK_MODE,
+            MOUSE_MODE,
           );
         }
-        if (rightMode !== HID_JOYSTICK_MODE) {
+        if (rightMode !== MOUSE_MODE) {
           await api.setCustomMenuValue(
             JOYSTICK_CHANNEL,
             RIGHT_MODE_ID,
-            HID_JOYSTICK_MODE,
+            MOUSE_MODE,
           );
         }
 
-        if (!cancelled) {
+        // Load current sensitivity values
+        const lSensRes = await api.getCustomMenuValue([
+          JOYSTICK_CHANNEL,
+          LEFT_SENS_ID,
+        ]);
+        const rSensRes = await api.getCustomMenuValue([
+          JOYSTICK_CHANNEL,
+          RIGHT_SENS_ID,
+        ]);
+
+        if (!cancelledRef.current) {
+          setLeftSens(lSensRes[1]);
+          setRightSens(rSensRes[1]);
+          setConnected(true);
           setModeStatus(
-            `Both joysticks set to HID Joystick mode. Previous — Left: ${getModeName(leftMode)}, Right: ${getModeName(rightMode)}`,
+            `Both joysticks set to Mouse mode. Previous — Left: ${getModeName(leftMode)}, Right: ${getModeName(rightMode)}`,
           );
         }
       } catch (e) {
         console.error('Failed to set joystick modes:', e);
-        if (!cancelled) {
+        if (!cancelledRef.current) {
           setModeStatus('Failed to set joystick modes. Is a device connected?');
         }
       }
     };
 
-    activateRawMode();
+    activateMouseMode();
 
     return () => {
-      cancelled = true;
-      // Restore previous modes on unmount
+      cancelledRef.current = true;
       const restoreModes = async () => {
         try {
           if (prevLeftModeRef.current !== null) {
@@ -287,80 +332,68 @@ export const Joystick: FC = () => {
     };
   }, [api]);
 
-  // Poll Gamepad API for joystick data
-  const pollGamepad = useCallback(() => {
-    if (!isActiveRef.current) return;
-
-    const gamepads = navigator.getGamepads();
-    let found = false;
-
-    for (const gp of gamepads) {
-      if (gp && gp.axes.length >= 2) {
-        found = true;
-        setGamepadConnected(true);
-        setGamepadName(gp.id);
-
-        // Standard mapping: axes[0]=LX, axes[1]=LY, axes[2]=RX, axes[3]=RY
-        const lx = gp.axes[0] ?? 0;
-        const ly = gp.axes[1] ?? 0;
-        const rx = gp.axes.length >= 4 ? (gp.axes[2] ?? 0) : 0;
-        const ry = gp.axes.length >= 4 ? (gp.axes[3] ?? 0) : 0;
-
-        // Clamp to unit circle
-        const clamp = (x: number, y: number): JoystickPosition => {
-          const mag = Math.sqrt(x * x + y * y);
-          if (mag > 1) {
-            return {x: x / mag, y: y / mag};
-          }
-          return {x, y};
-        };
-
-        setLeftPos(clamp(lx, ly));
-        setRightPos(clamp(rx, ry));
-        break; // Use first gamepad found
-      }
-    }
-
-    if (!found) {
-      setGamepadConnected(false);
-      setGamepadName('');
-    }
-
-    animFrameRef.current = requestAnimationFrame(pollGamepad);
-  }, []);
-
+  // Poll raw joystick axes via HID custom command
   useEffect(() => {
-    isActiveRef.current = true;
-    animFrameRef.current = requestAnimationFrame(pollGamepad);
+    if (!api || !connected) return;
 
-    const handleConnect = () => {
-      // Gamepad connected event - polling will pick it up
-    };
-    const handleDisconnect = () => {
-      setGamepadConnected(false);
-      setGamepadName('');
+    pollingRef.current = true;
+
+    const poll = async () => {
+      while (pollingRef.current) {
+        try {
+          const res = await api.getCustomMenuValue([
+            JOYSTICK_CHANNEL,
+            RAW_AXES_ID,
+          ]);
+          // res[0] = echoed value_id, res[1..4] = signed percentages (-100..100) as int8
+          const toSigned = (v: number) => (v > 127 ? v - 256 : v);
+          const lx = toSigned(res[1]);
+          const ly = toSigned(res[2]);
+          const rx = toSigned(res[3]);
+          const ry = toSigned(res[4]);
+
+          setLeftPos({x: lx / 100, y: ly / 100});
+          setRightPos({x: rx / 100, y: ry / 100});
+        } catch {
+          // Device may have disconnected
+        }
+        // ~30fps polling rate
+        await new Promise((r) => setTimeout(r, 33));
+      }
     };
 
-    window.addEventListener('gamepadconnected', handleConnect);
-    window.addEventListener('gamepaddisconnected', handleDisconnect);
+    poll();
 
     return () => {
-      isActiveRef.current = false;
-      cancelAnimationFrame(animFrameRef.current);
-      window.removeEventListener('gamepadconnected', handleConnect);
-      window.removeEventListener('gamepaddisconnected', handleDisconnect);
+      pollingRef.current = false;
     };
-  }, [pollGamepad]);
+  }, [api, connected]);
+
+  const handleSensChange = useCallback(
+    async (side: 'left' | 'right', value: number) => {
+      if (side === 'left') setLeftSens(value);
+      else setRightSens(value);
+
+      if (!api) return;
+      try {
+        const id = side === 'left' ? LEFT_SENS_ID : RIGHT_SENS_ID;
+        await api.setCustomMenuValue(JOYSTICK_CHANNEL, id, value);
+      } catch {
+        // ignore
+      }
+    },
+    [api],
+  );
 
   return (
     <JoystickPane>
-      <Title>Joystick Monitor</Title>
+      <Title>Mouse Sensitivity</Title>
       <StatusBar>
         <span>
-          <StatusDot $connected={gamepadConnected} />
-          {gamepadConnected
-            ? `Gamepad: ${gamepadName}`
-            : 'No gamepad detected — move a joystick to connect'}
+          <StatusDot $connected={connected} />
+          {connected
+            ? 'Connected — joysticks in Mouse mode'
+            : 'Connecting...'}
         </span>
       </StatusBar>
       {modeStatus && (
@@ -372,6 +405,30 @@ export const Joystick: FC = () => {
         <JoystickCircle position={leftPos} label="Left Joystick" />
         <JoystickCircle position={rightPos} label="Right Joystick" />
       </JoystickContainer>
+      <SensContainer>
+        <SensGroup>
+          <SensLabel>Left Sensitivity</SensLabel>
+          <SensSlider
+            type="range"
+            min={20}
+            max={249}
+            value={leftSens}
+            onChange={(e) => handleSensChange('left', Number(e.target.value))}
+          />
+          <SensValue>{leftSens}</SensValue>
+        </SensGroup>
+        <SensGroup>
+          <SensLabel>Right Sensitivity</SensLabel>
+          <SensSlider
+            type="range"
+            min={20}
+            max={249}
+            value={rightSens}
+            onChange={(e) => handleSensChange('right', Number(e.target.value))}
+          />
+          <SensValue>{rightSens}</SensValue>
+        </SensGroup>
+      </SensContainer>
       <Divider />
       <SpeedCurveEditor api={api} />
     </JoystickPane>

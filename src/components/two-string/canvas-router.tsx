@@ -92,7 +92,7 @@ export const CanvasRouter = () => {
   const showAuthorizeButton = 'hid' in navigator || OVERRIDE_HID_CHECK;
   const hideCanvasScene =
     !showAuthorizeButton ||
-    ['/settings', '/errors', '/console'].includes(path) ||
+    ['/settings', '/errors', '/console', '/joystick'].includes(path) ||
     hideDesignScene ||
     hideConfigureScene;
   const configureKeyboardIsSelectable = useAppSelector(

@@ -279,12 +279,13 @@ const TooltipText = styled.div`
 `;
 
 // ─── Custom Menu IDs for Speed Curve Points ─────────────────────────────────
-// Left curve  : channel 0, IDs 30..37  (8 Y-values, 0-255)
-// Right curve : channel 0, IDs 38..45  (8 Y-values, 0-255)
+// Each ID transmits 16 bytes: [x0..x7, y0..y7] (all 0-255)
+// Left curve  : channel 0, ID 30
+// Right curve : channel 0, ID 31
 
 const SPEED_CURVE_CHANNEL = 0;
-const LEFT_CURVE_START_ID = 30;
-const RIGHT_CURVE_START_ID = 38;
+const LEFT_CURVE_ID = 30;
+const RIGHT_CURVE_ID = 31;
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
@@ -310,27 +311,59 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({api}) => {
   const interp = useMemo(() => monotoneCubicInterpolation(points), [points]);
   const curvePath = useMemo(() => curveToPath(interp), [interp]);
 
-  // NOTE: We do NOT auto-load curve data from firmware on mount.
-  // The firmware custom menu IDs for speed curve (30–45) may not be
-  // implemented yet. Sending getCustomMenuValue for unknown IDs would
-  // desynchronize the HID command queue and break other commands.
-  // Curves are managed locally with presets. The user can save to
-  // firmware once the firmware-side handlers are implemented.
-
-  // Load/save curve state from localStorage for persistence across sessions
+  // Load curve data from firmware on mount
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('via-speed-curves');
-      if (saved) {
-        const data = JSON.parse(saved);
-        if (data.left?.length === CURVE_POINT_COUNT) setLeftPoints(data.left);
-        if (data.right?.length === CURVE_POINT_COUNT) setRightPoints(data.right);
-        if (data.left) matchPreset(data.left);
+    if (!api) return;
+    let cancelled = false;
+
+    const loadCurve = async (curveId: number): Promise<CurvePoint[]> => {
+      const res = await api.getCustomMenuValue([
+        SPEED_CURVE_CHANNEL,
+        curveId,
+      ]);
+      // res[0] = echoed value_id, res[1..16] = 16 data bytes: [x0..x7, y0..y7]
+      const data = res.slice(1);
+      const pts: CurvePoint[] = [];
+      for (let i = 0; i < CURVE_POINT_COUNT; i++) {
+        const xVal = data[i] ?? Math.round(i / (CURVE_POINT_COUNT - 1) * 255);
+        const yVal = data[i + CURVE_POINT_COUNT] ?? xVal;
+        pts.push({
+          x: Math.max(0, Math.min(1, xVal / 255)),
+          y: Math.max(0, Math.min(1, yVal / 255)),
+        });
       }
-    } catch {
-      // ignore parse errors
-    }
-  }, []);
+      return pts;
+    };
+
+    (async () => {
+      try {
+        const [left, right] = await Promise.all([
+          loadCurve(LEFT_CURVE_ID),
+          loadCurve(RIGHT_CURVE_ID),
+        ]);
+        if (!cancelled) {
+          setLeftPoints(left);
+          setRightPoints(right);
+          matchPreset(left);
+        }
+      } catch {
+        // Fallback to localStorage if firmware read fails
+        try {
+          const saved = localStorage.getItem('via-speed-curves');
+          if (saved && !cancelled) {
+            const data = JSON.parse(saved);
+            if (data.left?.length === CURVE_POINT_COUNT) setLeftPoints(data.left);
+            if (data.right?.length === CURVE_POINT_COUNT) setRightPoints(data.right);
+            if (data.left) matchPreset(data.left);
+          }
+        } catch {
+          // ignore parse errors
+        }
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [api]);
 
   // Persist to localStorage whenever curves change
   useEffect(() => {
@@ -454,25 +487,30 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({api}) => {
   // corresponding handlers for these IDs. If not implemented yet, the save
   // will fail gracefully with an error message.
 
+  const packCurve = useCallback((pts: CurvePoint[]): number[] => {
+    // Pack 8 X-values then 8 Y-values, each 0-255
+    const bytes: number[] = [];
+    for (let i = 0; i < CURVE_POINT_COUNT; i++) {
+      bytes.push(Math.round(pts[i].x * 255));
+    }
+    for (let i = 0; i < CURVE_POINT_COUNT; i++) {
+      bytes.push(Math.round(pts[i].y * 255));
+    }
+    return bytes;
+  }, []);
+
   const saveCurve = useCallback(async () => {
     if (!api) {
       setSaveStatus('No device connected');
       return;
     }
 
-    const startId =
-      side === 'left' ? LEFT_CURVE_START_ID : RIGHT_CURVE_START_ID;
+    const curveId = side === 'left' ? LEFT_CURVE_ID : RIGHT_CURVE_ID;
 
     try {
       setSaveStatus('Saving...');
-      for (let i = 0; i < CURVE_POINT_COUNT; i++) {
-        const val = Math.round(points[i].y * 255);
-        await api.setCustomMenuValue(
-          SPEED_CURVE_CHANNEL,
-          startId + i,
-          val,
-        );
-      }
+      const bytes = packCurve(points);
+      await api.setCustomMenuValue(SPEED_CURVE_CHANNEL, curveId, ...bytes);
       // Persist to EEPROM
       await api.commitCustomMenu(SPEED_CURVE_CHANNEL);
       setSaveStatus('Saved!');
@@ -482,7 +520,7 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({api}) => {
       setSaveStatus('Save failed — firmware may not support curve data');
       setTimeout(() => setSaveStatus(''), 4000);
     }
-  }, [api, side, points]);
+  }, [api, side, points, packCurve]);
 
   const saveBothCurves = useCallback(async () => {
     if (!api) {
@@ -492,20 +530,10 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({api}) => {
 
     try {
       setSaveStatus('Saving both curves...');
-      for (let i = 0; i < CURVE_POINT_COUNT; i++) {
-        await api.setCustomMenuValue(
-          SPEED_CURVE_CHANNEL,
-          LEFT_CURVE_START_ID + i,
-          Math.round(leftPoints[i].y * 255),
-        );
-      }
-      for (let i = 0; i < CURVE_POINT_COUNT; i++) {
-        await api.setCustomMenuValue(
-          SPEED_CURVE_CHANNEL,
-          RIGHT_CURVE_START_ID + i,
-          Math.round(rightPoints[i].y * 255),
-        );
-      }
+      const leftBytes = packCurve(leftPoints);
+      const rightBytes = packCurve(rightPoints);
+      await api.setCustomMenuValue(SPEED_CURVE_CHANNEL, LEFT_CURVE_ID, ...leftBytes);
+      await api.setCustomMenuValue(SPEED_CURVE_CHANNEL, RIGHT_CURVE_ID, ...rightBytes);
       await api.commitCustomMenu(SPEED_CURVE_CHANNEL);
       setSaveStatus('Both curves saved!');
       setTimeout(() => setSaveStatus(''), 2000);
@@ -514,7 +542,7 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({api}) => {
       setSaveStatus('Save failed');
       setTimeout(() => setSaveStatus(''), 4000);
     }
-  }, [api, leftPoints, rightPoints]);
+  }, [api, leftPoints, rightPoints, packCurve]);
 
   // ─── Axis labels ────────────────────────────────────────────────────────
 
