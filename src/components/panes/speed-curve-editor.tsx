@@ -1,5 +1,15 @@
-import React, {FC, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import styled from 'styled-components';
+import type {KeyboardAPI} from 'src/utils/keyboard-api';
+import {validateSpeedCurve} from 'src/utils/joystick-mouse';
+import type {JoystickSide} from 'src/utils/joystick-mouse';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -37,23 +47,35 @@ const linearPoints = (): CurvePoint[] =>
 const qmkDefaultPoints = (): CurvePoint[] => {
   // QMK's default mouse driver uses a stepped acceleration:
   // slow ramp at beginning, then faster acceleration at higher deflections
-  const xs = Array.from({length: CURVE_POINT_COUNT}, (_, i) => i / (CURVE_POINT_COUNT - 1));
+  const xs = Array.from(
+    {length: CURVE_POINT_COUNT},
+    (_, i) => i / (CURVE_POINT_COUNT - 1),
+  );
   return xs.map((x) => ({x, y: Math.pow(x, 1.6)}));
 };
 
 const exponentialPoints = (): CurvePoint[] => {
-  const xs = Array.from({length: CURVE_POINT_COUNT}, (_, i) => i / (CURVE_POINT_COUNT - 1));
+  const xs = Array.from(
+    {length: CURVE_POINT_COUNT},
+    (_, i) => i / (CURVE_POINT_COUNT - 1),
+  );
   return xs.map((x) => ({x, y: Math.pow(x, 2.5)}));
 };
 
 const precisionPoints = (): CurvePoint[] => {
   // Logarithmic feel — fine control at low deflection, fast at high
-  const xs = Array.from({length: CURVE_POINT_COUNT}, (_, i) => i / (CURVE_POINT_COUNT - 1));
+  const xs = Array.from(
+    {length: CURVE_POINT_COUNT},
+    (_, i) => i / (CURVE_POINT_COUNT - 1),
+  );
   return xs.map((x) => ({x, y: x === 0 ? 0 : Math.pow(x, 0.5)}));
 };
 
 const sCurvePoints = (): CurvePoint[] => {
-  const xs = Array.from({length: CURVE_POINT_COUNT}, (_, i) => i / (CURVE_POINT_COUNT - 1));
+  const xs = Array.from(
+    {length: CURVE_POINT_COUNT},
+    (_, i) => i / (CURVE_POINT_COUNT - 1),
+  );
   // Smooth S-curve using a sigmoid-like function
   return xs.map((x) => {
     if (x === 0) return {x, y: 0};
@@ -65,17 +87,40 @@ const sCurvePoints = (): CurvePoint[] => {
 
 const flatTopPoints = (): CurvePoint[] => {
   // Quick ramp up then flat — good for consistent speed once past dead zone
-  const xs = Array.from({length: CURVE_POINT_COUNT}, (_, i) => i / (CURVE_POINT_COUNT - 1));
+  const xs = Array.from(
+    {length: CURVE_POINT_COUNT},
+    (_, i) => i / (CURVE_POINT_COUNT - 1),
+  );
   return xs.map((x) => ({x, y: Math.min(1, x * 2.5)}));
 };
 
 export const PRESETS: CurvePreset[] = [
   {name: 'Linear', description: 'Constant 1:1 mapping', points: linearPoints()},
-  {name: 'QMK Default', description: 'Moderate acceleration curve', points: qmkDefaultPoints()},
-  {name: 'Exponential', description: 'Slow start, fast finish', points: exponentialPoints()},
-  {name: 'Precision', description: 'Fine control at low deflection', points: precisionPoints()},
-  {name: 'S-Curve', description: 'Smooth slow–fast–slow transition', points: sCurvePoints()},
-  {name: 'Fast Ramp', description: 'Quick ramp then plateau', points: flatTopPoints()},
+  {
+    name: 'QMK Default',
+    description: 'Moderate acceleration curve',
+    points: qmkDefaultPoints(),
+  },
+  {
+    name: 'Exponential',
+    description: 'Slow start, fast finish',
+    points: exponentialPoints(),
+  },
+  {
+    name: 'Precision',
+    description: 'Fine control at low deflection',
+    points: precisionPoints(),
+  },
+  {
+    name: 'S-Curve',
+    description: 'Smooth slow–fast–slow transition',
+    points: sCurvePoints(),
+  },
+  {
+    name: 'Fast Ramp',
+    description: 'Quick ramp then plateau',
+    points: flatTopPoints(),
+  },
 ];
 
 // ─── Interpolation helpers ──────────────────────────────────────────────────
@@ -206,7 +251,9 @@ const SideButton = styled.button<{$active: boolean}>`
   transition: all 0.15s;
   &:hover {
     background: ${(p) =>
-      p.$active ? 'var(--color_accent)' : 'rgba(var(--color_accent-rgb), 0.15)'};
+      p.$active
+        ? 'var(--color_accent)'
+        : 'rgba(var(--color_accent-rgb), 0.15)'};
   }
 `;
 
@@ -242,6 +289,9 @@ const GraphSVG = styled.svg`
 
 const SaveRow = styled.div`
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: ${GRAPH_W + 40}px;
   gap: 10px;
   align-items: center;
 `;
@@ -290,19 +340,32 @@ const RIGHT_CURVE_ID = 31;
 // ─── Component ──────────────────────────────────────────────────────────────
 
 interface SpeedCurveEditorProps {
-  api: any; // KeyboardAPI instance (or null)
+  api: KeyboardAPI | null;
+  onCurveApplied: (side: JoystickSide, bytes: number[] | null) => void;
 }
 
-export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({api}) => {
-  const [side, setSide] = useState<'left' | 'right'>('left');
+// Reports only firmware-loaded or successfully saved bytes to the movement indicator.
+export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({
+  api,
+  onCurveApplied,
+}) => {
+  const [side, setSide] = useState<JoystickSide>('left');
   const [leftPoints, setLeftPoints] = useState<CurvePoint[]>(PRESETS[0].points);
-  const [rightPoints, setRightPoints] = useState<CurvePoint[]>(PRESETS[0].points);
+  const [rightPoints, setRightPoints] = useState<CurvePoint[]>(
+    PRESETS[0].points,
+  );
   const [activePreset, setActivePreset] = useState<string>('Linear');
   const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
   const [saveStatus, setSaveStatus] = useState<string>('');
-  const [hoverInfo, setHoverInfo] = useState<{x: number; y: number} | null>(null);
+  const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
+  const [hoverInfo, setHoverInfo] = useState<{x: number; y: number} | null>(
+    null,
+  );
 
   const svgRef = useRef<SVGSVGElement>(null);
+  const activeApiRef = useRef(api);
+  activeApiRef.current = api;
 
   const points = side === 'left' ? leftPoints : rightPoints;
   const setPoints = side === 'left' ? setLeftPoints : setRightPoints;
@@ -311,71 +374,50 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({api}) => {
   const interp = useMemo(() => monotoneCubicInterpolation(points), [points]);
   const curvePath = useMemo(() => curveToPath(interp), [interp]);
 
-  // Load curve data from firmware on mount
+  // Never use draft/localStorage curves to predict what the firmware will do.
   useEffect(() => {
-    if (!api) return;
     let cancelled = false;
+    onCurveApplied('left', null);
+    onCurveApplied('right', null);
+    if (!api) return;
 
-    const loadCurve = async (curveId: number): Promise<CurvePoint[]> => {
-      const res = await api.getCustomMenuValue([
-        SPEED_CURVE_CHANNEL,
-        curveId,
-      ]);
-      // res[0] = echoed value_id, res[1..16] = 16 data bytes: [x0..x7, y0..y7]
-      const data = res.slice(1);
-      const pts: CurvePoint[] = [];
-      for (let i = 0; i < CURVE_POINT_COUNT; i++) {
-        const xVal = data[i] ?? Math.round(i / (CURVE_POINT_COUNT - 1) * 255);
-        const yVal = data[i + CURVE_POINT_COUNT] ?? xVal;
-        pts.push({
-          x: Math.max(0, Math.min(1, xVal / 255)),
-          y: Math.max(0, Math.min(1, yVal / 255)),
-        });
-      }
-      return pts;
-    };
-
-    (async () => {
+    const loadCurve = async (side: JoystickSide, curveId: number) => {
       try {
-        const [left, right] = await Promise.all([
-          loadCurve(LEFT_CURVE_ID),
-          loadCurve(RIGHT_CURVE_ID),
+        const res = await api.getCustomMenuValue([
+          SPEED_CURVE_CHANNEL,
+          curveId,
         ]);
-        if (!cancelled) {
-          setLeftPoints(left);
-          setRightPoints(right);
-          matchPreset(left);
+        if (res[0] !== curveId) throw new Error('Unexpected curve response');
+        const bytes = res.slice(1, 17);
+        validateSpeedCurve(bytes);
+        const points = Array.from({length: CURVE_POINT_COUNT}, (_, i) => ({
+          x: bytes[i] / 255,
+          y: bytes[i + CURVE_POINT_COUNT] / 255,
+        }));
+        if (cancelled) return;
+        if (side === 'left') {
+          setLeftPoints(points);
+          matchPreset(points);
+        } else {
+          setRightPoints(points);
         }
-      } catch {
-        // Fallback to localStorage if firmware read fails
-        try {
-          const saved = localStorage.getItem('via-speed-curves');
-          if (saved && !cancelled) {
-            const data = JSON.parse(saved);
-            if (data.left?.length === CURVE_POINT_COUNT) setLeftPoints(data.left);
-            if (data.right?.length === CURVE_POINT_COUNT) setRightPoints(data.right);
-            if (data.left) matchPreset(data.left);
-          }
-        } catch {
-          // ignore parse errors
-        }
+        onCurveApplied(side, bytes);
+      } catch (error) {
+        console.error(`Failed to read ${side} speed curve:`, error);
+        if (!cancelled)
+          setSaveStatus(
+            'Could not read speed curves. Reconnect the keyboard to retry.',
+          );
       }
-    })();
-
-    return () => { cancelled = true; };
-  }, [api]);
-
-  // Persist to localStorage whenever curves change
-  useEffect(() => {
-    try {
-      localStorage.setItem(
-        'via-speed-curves',
-        JSON.stringify({left: leftPoints, right: rightPoints}),
-      );
-    } catch {
-      // ignore storage errors
-    }
-  }, [leftPoints, rightPoints]);
+    };
+    void Promise.all([
+      loadCurve('left', LEFT_CURVE_ID),
+      loadCurve('right', RIGHT_CURVE_ID),
+    ]);
+    return () => {
+      cancelled = true;
+    };
+  }, [api, onCurveApplied]);
 
   // Match current points to a preset name
   const matchPreset = useCallback((pts: CurvePoint[]) => {
@@ -482,10 +524,7 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({api}) => {
   }, [draggingIdx]);
 
   // ─── Save to firmware ───────────────────────────────────────────────────
-  // These save functions send curve Y-values via setCustomMenuValue to
-  // channel 0, IDs 30–37 (left) and 38–45 (right). The firmware must have
-  // corresponding handlers for these IDs. If not implemented yet, the save
-  // will fail gracefully with an error message.
+  // Channel 0, IDs 30/31 each transmit all 16 curve bytes in one message.
 
   const packCurve = useCallback((pts: CurvePoint[]): number[] => {
     // Pack 8 X-values then 8 Y-values, each 0-255
@@ -499,50 +538,50 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({api}) => {
     return bytes;
   }, []);
 
-  const saveCurve = useCallback(async () => {
-    if (!api) {
-      setSaveStatus('No device connected');
-      return;
-    }
-
-    const curveId = side === 'left' ? LEFT_CURVE_ID : RIGHT_CURVE_ID;
-
-    try {
-      setSaveStatus('Saving...');
-      const bytes = packCurve(points);
-      await api.setCustomMenuValue(SPEED_CURVE_CHANNEL, curveId, ...bytes);
-      // Persist to EEPROM
-      await api.commitCustomMenu(SPEED_CURVE_CHANNEL);
-      setSaveStatus('Saved!');
-      setTimeout(() => setSaveStatus(''), 2000);
-    } catch (err) {
-      console.error('Failed to save speed curve:', err);
-      setSaveStatus('Save failed — firmware may not support curve data');
-      setTimeout(() => setSaveStatus(''), 4000);
-    }
-  }, [api, side, points, packCurve]);
-
-  const saveBothCurves = useCallback(async () => {
-    if (!api) {
-      setSaveStatus('No device connected');
-      return;
-    }
-
-    try {
-      setSaveStatus('Saving both curves...');
-      const leftBytes = packCurve(leftPoints);
-      const rightBytes = packCurve(rightPoints);
-      await api.setCustomMenuValue(SPEED_CURVE_CHANNEL, LEFT_CURVE_ID, ...leftBytes);
-      await api.setCustomMenuValue(SPEED_CURVE_CHANNEL, RIGHT_CURVE_ID, ...rightBytes);
-      await api.commitCustomMenu(SPEED_CURVE_CHANNEL);
-      setSaveStatus('Both curves saved!');
-      setTimeout(() => setSaveStatus(''), 2000);
-    } catch (err) {
-      console.error('Failed to save speed curves:', err);
-      setSaveStatus('Save failed');
-      setTimeout(() => setSaveStatus(''), 4000);
-    }
-  }, [api, leftPoints, rightPoints, packCurve]);
+  // Serialize whole transactions: the HID queue alone permits overlapping
+  // multi-command saves to interleave and publish stale indicator settings.
+  const saveCurves = useCallback(
+    async (sides: JoystickSide[]) => {
+      if (savingRef.current) return;
+      if (!api) {
+        setSaveStatus('No device connected');
+        return;
+      }
+      savingRef.current = true;
+      setSaving(true);
+      const updates = sides.map((side) => ({
+        side,
+        id: side === 'left' ? LEFT_CURVE_ID : RIGHT_CURVE_ID,
+        bytes: packCurve(side === 'left' ? leftPoints : rightPoints),
+      }));
+      // Firmware applies SET immediately, before the SAVE acknowledgement.
+      sides.forEach((side) => onCurveApplied(side, null));
+      try {
+        setSaveStatus('Saving...');
+        for (const update of updates) {
+          await api.setCustomMenuValue(
+            SPEED_CURVE_CHANNEL,
+            update.id,
+            ...update.bytes,
+          );
+        }
+        await api.commitCustomMenu(SPEED_CURVE_CHANNEL);
+        if (activeApiRef.current !== api) return;
+        updates.forEach(({side, bytes}) => onCurveApplied(side, bytes));
+        setSaveStatus('Saved!');
+      } catch (error) {
+        console.error('Failed to save speed curves:', error);
+        if (activeApiRef.current !== api) return;
+        setSaveStatus(
+          'Save failed. Reconnect or save again to restore the movement indicator.',
+        );
+      } finally {
+        savingRef.current = false;
+        if (activeApiRef.current === api) setSaving(false);
+      }
+    },
+    [api, leftPoints, rightPoints, packCurve, onCurveApplied],
+  );
 
   // ─── Axis labels ────────────────────────────────────────────────────────
 
@@ -718,7 +757,13 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({api}) => {
                 cx={cx}
                 cy={cy}
                 r={isDragging ? POINT_RADIUS + 2 : POINT_RADIUS}
-                fill={isDragging ? 'var(--color_accent)' : isEndpoint ? 'var(--color_accent)' : '#fff'}
+                fill={
+                  isDragging
+                    ? 'var(--color_accent)'
+                    : isEndpoint
+                      ? 'var(--color_accent)'
+                      : '#fff'
+                }
                 stroke="var(--color_accent)"
                 strokeWidth={isEndpoint ? 2 : 1.5}
                 opacity={isDragging ? 1 : 0.9}
@@ -803,13 +848,19 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({api}) => {
 
       {/* Save actions */}
       <SaveRow>
-        <ActionButton onClick={saveCurve} disabled={!api}>
+        <ActionButton
+          onClick={() => saveCurves([side])}
+          disabled={!api || saving}
+        >
           Save {side === 'left' ? 'Left' : 'Right'} Curve
         </ActionButton>
-        <ActionButton onClick={saveBothCurves} disabled={!api}>
+        <ActionButton
+          onClick={() => saveCurves(['left', 'right'])}
+          disabled={!api || saving}
+        >
           Save Both
         </ActionButton>
-        {saveStatus && <StatusText>{saveStatus}</StatusText>}
+        {saveStatus && <StatusText role="status">{saveStatus}</StatusText>}
       </SaveRow>
     </Container>
   );

@@ -41,10 +41,20 @@ You will also see any lint errors in the console.
 Builds a static copy of your site to the `build/` folder.
 Your app is ready to be deployed!
 
-#### `npm run test`
+#### `bun run test`
 
-Launches the application test runner.
-Run with the `--watch` flag (`npm test -- --watch`) to run in interactive watch mode.
+Runs the joystick Mouse Mode regression tests. Expected reports are captured from
+O2's C firmware, including its fixed-point arithmetic and integer truncation.
+See [tests/README.md](tests/README.md) to refresh the reference data.
+
+The joystick monitor shades input positions that produce zero pointer movement on
+both axes with the saved speed curve and current sensitivity. Unsaved curve edits
+do not change the shading. Failed settings reads or writes hide the affected
+indicator instead of using guessed settings.
+
+Local validation logs and screenshots for this fix are in the git-ignored
+`.codex-logs/via-deadzone/` directory (`tests.log`, `build.log`,
+`typecheck.log`, and `browser.log`).
 
 ---
 

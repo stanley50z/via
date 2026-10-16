@@ -1,9 +1,19 @@
-import React, {FC, useEffect, useRef, useState, useCallback} from 'react';
+import React, {
+  FC,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
 import styled from 'styled-components';
 import {Pane} from './pane';
 import {useAppSelector} from 'src/store/hooks';
 import {getSelectedKeyboardAPI} from 'src/store/devicesSlice';
 import {SpeedCurveEditor} from './speed-curve-editor';
+import type {KeyboardAPI} from 'src/utils/keyboard-api';
+import {createMouseResponse} from 'src/utils/joystick-mouse';
+import type {JoystickSide} from 'src/utils/joystick-mouse';
 
 // Custom menu channel and IDs for joystick modes (from keyboard definition)
 const JOYSTICK_CHANNEL = 0;
@@ -125,13 +135,32 @@ const SensSlider = styled.input`
   accent-color: var(--color_accent);
 `;
 
+const IndicatorNote = styled.div`
+  color: var(--color_label);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  max-width: 280px;
+`;
+
 const CIRCLE_RADIUS = 120;
 const DOT_RADIUS = 10;
 
+// Shades the Cartesian product of the axes' no-movement bands, not a radial dead zone.
 const JoystickCircle: FC<{
   position: JoystickPosition;
   label: string;
-}> = ({position, label}) => {
+  curve: number[] | null;
+  sensitivity: number;
+}> = ({position, label, curve, sensitivity}) => {
+  const response = useMemo(
+    () => curve && createMouseResponse(curve, sensitivity),
+    [curve, sensitivity],
+  );
+  const moving =
+    response &&
+    (response.axisOutput(Math.round(position.x * 100)) !== 0 ||
+      response.axisOutput(Math.round(position.y * 100)) !== 0);
   const size = CIRCLE_RADIUS * 2 + 40;
   const center = size / 2;
 
@@ -142,7 +171,13 @@ const JoystickCircle: FC<{
   return (
     <JoystickWrapper>
       <JoystickLabel>{label}</JoystickLabel>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        role="img"
+        aria-label={`${label} input and no-movement region`}
+      >
         {/* Outer circle */}
         <circle
           cx={center}
@@ -172,17 +207,24 @@ const JoystickCircle: FC<{
           strokeWidth={1}
           opacity={0.2}
         />
-        {/* Inner dead zone circle */}
-        <circle
-          cx={center}
-          cy={center}
-          r={CIRCLE_RADIUS * 0.15}
-          fill="none"
-          stroke="var(--color_accent)"
-          strokeWidth={1}
-          opacity={0.15}
-          strokeDasharray="4 4"
-        />
+        <g aria-label="No-movement region">
+          {response?.noMovementRanges.flatMap((x) =>
+            response.noMovementRanges.map((y) => (
+              <rect
+                key={`${x.min},${y.min}`}
+                x={center + (x.min * CIRCLE_RADIUS) / 100}
+                y={center + (y.min * CIRCLE_RADIUS) / 100}
+                width={((x.max - x.min) * CIRCLE_RADIUS) / 100}
+                height={((y.max - y.min) * CIRCLE_RADIUS) / 100}
+                fill="var(--color_accent)"
+                fillOpacity={0.14}
+                stroke="var(--color_accent)"
+                strokeWidth={1.5}
+                strokeDasharray="4 4"
+              />
+            )),
+          )}
+        </g>
         {/* Position trail (faint) */}
         <line
           x1={center}
@@ -211,25 +253,58 @@ const JoystickCircle: FC<{
         />
       </svg>
       <CoordLabel>
-        X: {Math.round(position.x * 100)}% &nbsp; Y: {Math.round(position.y * 100)}%
+        X: {Math.round(position.x * 100)}% &nbsp; Y:{' '}
+        {Math.round(position.y * 100)}%
       </CoordLabel>
+      <IndicatorNote>
+        {response ? (
+          <>
+            <div>{moving ? 'Pointer movement' : 'No pointer movement'}</div>
+            <div>Shaded area: no pointer movement with saved settings.</div>
+          </>
+        ) : (
+          'Movement indicator unavailable. Check the connection and read or save settings again.'
+        )}
+      </IndicatorNote>
     </JoystickWrapper>
   );
 };
 
+// Reset the monitor and its saved settings whenever the selected device changes.
 export const Joystick: FC = () => {
   const api = useAppSelector(getSelectedKeyboardAPI);
+  return (
+    <JoystickControls
+      key={api ? api.kbAddr : 'disconnected'}
+      api={api || null}
+    />
+  );
+};
 
+const JoystickControls: FC<{api: KeyboardAPI | null}> = ({api}) => {
   const [leftPos, setLeftPos] = useState<JoystickPosition>({x: 0, y: 0});
   const [rightPos, setRightPos] = useState<JoystickPosition>({x: 0, y: 0});
   const [connected, setConnected] = useState(false);
   const [modeStatus, setModeStatus] = useState<string>('');
   const [leftSens, setLeftSens] = useState(128);
   const [rightSens, setRightSens] = useState(128);
+  const [curves, setCurves] = useState<Record<JoystickSide, number[] | null>>({
+    left: null,
+    right: null,
+  });
+  const [sensKnown, setSensKnown] = useState({left: false, right: false});
+  const [settingsError, setSettingsError] = useState('');
+  const [axesAvailable, setAxesAvailable] = useState(false);
+  const [axesError, setAxesError] = useState('');
+  const onCurveApplied = useCallback(
+    (side: JoystickSide, bytes: number[] | null) => {
+      setCurves((previous) => ({...previous, [side]: bytes}));
+    },
+    [],
+  );
 
   const prevLeftModeRef = useRef<number | null>(null);
   const prevRightModeRef = useRef<number | null>(null);
-  const pollingRef = useRef(false);
   const cancelledRef = useRef(false);
 
   // Set joystick modes to Mouse on mount, restore on unmount
@@ -288,9 +363,17 @@ export const Joystick: FC = () => {
           RIGHT_SENS_ID,
         ]);
 
+        if (
+          [lSensRes, rSensRes].some(
+            (res) => !Number.isInteger(res[1]) || res[1] < 0 || res[1] > 255,
+          )
+        ) {
+          throw new Error('Invalid mouse sensitivity response');
+        }
         if (!cancelledRef.current) {
           setLeftSens(lSensRes[1]);
           setRightSens(rSensRes[1]);
+          setSensKnown({left: true, right: true});
           setConnected(true);
           setModeStatus(
             `Both joysticks set to Mouse mode. Previous — Left: ${getModeName(leftMode)}, Right: ${getModeName(rightMode)}`,
@@ -332,54 +415,69 @@ export const Joystick: FC = () => {
     };
   }, [api]);
 
-  // Poll raw joystick axes via HID custom command
+  // A lost or malformed raw-axes report invalidates live movement claims.
   useEffect(() => {
     if (!api || !connected) return;
-
-    pollingRef.current = true;
-
+    let active = true;
     const poll = async () => {
-      while (pollingRef.current) {
+      while (active) {
         try {
           const res = await api.getCustomMenuValue([
             JOYSTICK_CHANNEL,
             RAW_AXES_ID,
           ]);
-          // res[0] = echoed value_id, res[1..4] = signed percentages (-100..100) as int8
-          const toSigned = (v: number) => (v > 127 ? v - 256 : v);
-          const lx = toSigned(res[1]);
-          const ly = toSigned(res[2]);
-          const rx = toSigned(res[3]);
-          const ry = toSigned(res[4]);
-
-          setLeftPos({x: lx / 100, y: ly / 100});
-          setRightPos({x: rx / 100, y: ry / 100});
+          const axes = res
+            .slice(1, 5)
+            .map((value) => (value > 127 ? value - 256 : value));
+          if (
+            res[0] !== RAW_AXES_ID ||
+            axes.length !== 4 ||
+            axes.some(
+              (value) => !Number.isInteger(value) || Math.abs(value) > 100,
+            )
+          ) {
+            throw new Error('Invalid joystick input response');
+          }
+          if (!active) return;
+          setLeftPos({x: axes[0] / 100, y: axes[1] / 100});
+          setRightPos({x: axes[2] / 100, y: axes[3] / 100});
+          setAxesAvailable(true);
+          setAxesError('');
         } catch {
-          // Device may have disconnected
+          if (!active) return;
+          setAxesAvailable(false);
+          setAxesError(
+            'Joystick input unavailable. Check the keyboard connection.',
+          );
         }
-        // ~30fps polling rate
-        await new Promise((r) => setTimeout(r, 33));
+        await new Promise((resolve) => setTimeout(resolve, 33));
       }
     };
-
-    poll();
-
+    void poll();
     return () => {
-      pollingRef.current = false;
+      active = false;
     };
   }, [api, connected]);
 
   const handleSensChange = useCallback(
-    async (side: 'left' | 'right', value: number) => {
-      if (side === 'left') setLeftSens(value);
-      else setRightSens(value);
-
+    async (side: JoystickSide, value: number) => {
       if (!api) return;
+      setSensKnown((previous) => ({...previous, [side]: false}));
       try {
         const id = side === 'left' ? LEFT_SENS_ID : RIGHT_SENS_ID;
         await api.setCustomMenuValue(JOYSTICK_CHANNEL, id, value);
-      } catch {
-        // ignore
+        if (cancelledRef.current) return;
+        if (side === 'left') setLeftSens(value);
+        else setRightSens(value);
+        setSensKnown((previous) => ({...previous, [side]: true}));
+        setSettingsError('');
+      } catch (error) {
+        console.error(`Failed to set ${side} mouse sensitivity:`, error);
+        if (cancelledRef.current) return;
+        setSensKnown((previous) => ({...previous, [side]: false}));
+        setSettingsError(
+          'Sensitivity update failed. Reconnect or retry the slider to restore the movement indicator.',
+        );
       }
     },
     [api],
@@ -391,19 +489,27 @@ export const Joystick: FC = () => {
       <StatusBar>
         <span>
           <StatusDot $connected={connected} />
-          {connected
-            ? 'Connected — joysticks in Mouse mode'
-            : 'Connecting...'}
+          {connected ? 'Connected — joysticks in Mouse mode' : 'Connecting...'}
         </span>
       </StatusBar>
       {modeStatus && (
-        <StatusBar style={{fontSize: 12, opacity: 0.6}}>
-          {modeStatus}
-        </StatusBar>
+        <StatusBar style={{fontSize: 12, opacity: 0.6}}>{modeStatus}</StatusBar>
       )}
+      {settingsError && <StatusBar role="alert">{settingsError}</StatusBar>}
+      {axesError && <StatusBar role="alert">{axesError}</StatusBar>}
       <JoystickContainer>
-        <JoystickCircle position={leftPos} label="Left Joystick" />
-        <JoystickCircle position={rightPos} label="Right Joystick" />
+        <JoystickCircle
+          position={leftPos}
+          label="Left Joystick"
+          curve={sensKnown.left && axesAvailable ? curves.left : null}
+          sensitivity={leftSens}
+        />
+        <JoystickCircle
+          position={rightPos}
+          label="Right Joystick"
+          curve={sensKnown.right && axesAvailable ? curves.right : null}
+          sensitivity={rightSens}
+        />
       </JoystickContainer>
       <SensContainer>
         <SensGroup>
@@ -411,7 +517,9 @@ export const Joystick: FC = () => {
           <SensSlider
             type="range"
             min={20}
-            max={249}
+            max={255}
+            aria-label="Left mouse sensitivity"
+            disabled={!connected}
             value={leftSens}
             onChange={(e) => handleSensChange('left', Number(e.target.value))}
           />
@@ -422,7 +530,9 @@ export const Joystick: FC = () => {
           <SensSlider
             type="range"
             min={20}
-            max={249}
+            max={255}
+            aria-label="Right mouse sensitivity"
+            disabled={!connected}
             value={rightSens}
             onChange={(e) => handleSensChange('right', Number(e.target.value))}
           />
@@ -430,7 +540,7 @@ export const Joystick: FC = () => {
         </SensGroup>
       </SensContainer>
       <Divider />
-      <SpeedCurveEditor api={api} />
+      <SpeedCurveEditor api={api} onCurveApplied={onCurveApplied} />
     </JoystickPane>
   );
 };
