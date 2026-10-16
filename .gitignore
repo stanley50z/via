@@ -7,3 +7,4 @@ public/definitions
 dist
 dist-ssr
 .history
+.codex-logs/
