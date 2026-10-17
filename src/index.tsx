@@ -13,18 +13,17 @@ import i18n from 'i18next';
 import {initReactI18next} from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import resourcesToBackend from 'i18next-resources-to-backend';
+import {i18nOptions} from './i18n-options';
+
+i18n.on('languageChanged', (language) => {
+  document.documentElement.lang = language;
+});
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .use(resourcesToBackend((lng: string) => import(`./locales/${lng}.json`)))
-  .init({
-    fallbackLng: 'en',
-    debug: false,
-    interpolation: {
-      escapeValue: false,
-    },
-  });
+  .init(i18nOptions);
 
 const {MODE} = import.meta.env;
 

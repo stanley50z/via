@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react';
 import styled from 'styled-components';
+import {useTranslation} from 'react-i18next';
 import type {KeyboardAPI} from 'src/utils/keyboard-api';
 import {validateSpeedCurve} from 'src/utils/joystick-mouse';
 import type {JoystickSide} from 'src/utils/joystick-mouse';
@@ -349,6 +350,7 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({
   api,
   onCurveApplied,
 }) => {
+  const {t} = useTranslation();
   const [side, setSide] = useState<JoystickSide>('left');
   const [leftPoints, setLeftPoints] = useState<CurvePoint[]>(PRESETS[0].points);
   const [rightPoints, setRightPoints] = useState<CurvePoint[]>(
@@ -590,15 +592,15 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({
 
   return (
     <Container>
-      <SectionTitle>Mouse Speed Curve</SectionTitle>
+      <SectionTitle>{t('Mouse Speed Curve')}</SectionTitle>
 
       {/* Left / Right selector */}
       <SideSelector>
         <SideButton $active={side === 'left'} onClick={() => setSide('left')}>
-          Left Joystick
+          {t('Left Joystick')}
         </SideButton>
         <SideButton $active={side === 'right'} onClick={() => setSide('right')}>
-          Right Joystick
+          {t('Right Joystick')}
         </SideButton>
       </SideSelector>
 
@@ -609,14 +611,14 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({
             key={preset.name}
             $active={activePreset === preset.name}
             onClick={() => applyPreset(preset)}
-            title={preset.description}
+            title={t(preset.description)}
           >
-            {preset.name}
+            {t(preset.name)}
           </PresetButton>
         ))}
         {activePreset === 'Custom' && (
           <PresetButton $active={true} onClick={() => {}}>
-            Custom
+            {t('Custom')}
           </PresetButton>
         )}
       </PresetBar>
@@ -809,7 +811,7 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({
           fontSize={11}
           opacity={0.6}
         >
-          Joystick Distance
+          {t('Joystick Distance')}
         </text>
 
         {/* Y-axis labels */}
@@ -836,14 +838,14 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({
           opacity={0.6}
           transform={`rotate(-90, 12, ${PAD.top + PLOT_H / 2})`}
         >
-          Mouse Speed
+          {t('Mouse Speed')}
         </text>
       </GraphSVG>
 
       <TooltipText>
-        Drag the control points to shape the speed response curve.
+        {t('Drag the control points to shape the speed response curve.')}
         <br />
-        The dashed diagonal line represents a linear (1:1) mapping.
+        {t('The dashed diagonal line represents a linear (1:1) mapping.')}
       </TooltipText>
 
       {/* Save actions */}
@@ -852,15 +854,15 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({
           onClick={() => saveCurves([side])}
           disabled={!api || saving}
         >
-          Save {side === 'left' ? 'Left' : 'Right'} Curve
+          {t(side === 'left' ? 'Save Left Curve' : 'Save Right Curve')}
         </ActionButton>
         <ActionButton
           onClick={() => saveCurves(['left', 'right'])}
           disabled={!api || saving}
         >
-          Save Both
+          {t('Save Both')}
         </ActionButton>
-        {saveStatus && <StatusText role="status">{saveStatus}</StatusText>}
+        {saveStatus && <StatusText role="status">{t(saveStatus)}</StatusText>}
       </SaveRow>
     </Container>
   );

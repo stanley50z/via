@@ -31,7 +31,7 @@ const GlobalContainer = styled(Container)`
 `;
 
 export const UnconnectedGlobalMenu = () => {
-  const {t, i18n} = useTranslation();
+  const {t} = useTranslation();
   const showDesignTab = useAppSelector(getShowDesignTab);
   const showConsoleTab = useAppSelector(getShowConsoleTab);
 
@@ -53,7 +53,7 @@ export const UnconnectedGlobalMenu = () => {
         );
       },
     );
-  }, [location, showConsoleTab, showDesignTab]);
+  }, [location, showConsoleTab, showDesignTab, t]);
 
   return (
     <React.Fragment>

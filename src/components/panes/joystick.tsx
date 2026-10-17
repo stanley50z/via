@@ -7,6 +7,7 @@ import React, {
   useMemo,
 } from 'react';
 import styled from 'styled-components';
+import {useTranslation} from 'react-i18next';
 import {Pane} from './pane';
 import {useAppSelector} from 'src/store/hooks';
 import {getSelectedKeyboardAPI} from 'src/store/devicesSlice';
@@ -153,6 +154,7 @@ const JoystickCircle: FC<{
   curve: number[] | null;
   sensitivity: number;
 }> = ({position, label, curve, sensitivity}) => {
+  const {t} = useTranslation();
   const response = useMemo(
     () => curve && createMouseResponse(curve, sensitivity),
     [curve, sensitivity],
@@ -176,7 +178,7 @@ const JoystickCircle: FC<{
         height={size}
         viewBox={`0 0 ${size} ${size}`}
         role="img"
-        aria-label={`${label} input and no-movement region`}
+        aria-label={t('{{label}} input and no-movement region', {label})}
       >
         {/* Outer circle */}
         <circle
@@ -207,7 +209,7 @@ const JoystickCircle: FC<{
           strokeWidth={1}
           opacity={0.2}
         />
-        <g aria-label="No-movement region">
+        <g aria-label={t('No-movement region')}>
           {response?.noMovementRanges.flatMap((x) =>
             response.noMovementRanges.map((y) => (
               <rect
@@ -259,11 +261,15 @@ const JoystickCircle: FC<{
       <IndicatorNote>
         {response ? (
           <>
-            <div>{moving ? 'Pointer movement' : 'No pointer movement'}</div>
-            <div>Shaded area: no pointer movement with saved settings.</div>
+            <div>{t(moving ? 'Pointer movement' : 'No pointer movement')}</div>
+            <div>
+              {t('Shaded area: no pointer movement with saved settings.')}
+            </div>
           </>
         ) : (
-          'Movement indicator unavailable. Check the connection and read or save settings again.'
+          t(
+            'Movement indicator unavailable. Check the connection and read or save settings again.',
+          )
         )}
       </IndicatorNote>
     </JoystickWrapper>
@@ -282,10 +288,13 @@ export const Joystick: FC = () => {
 };
 
 const JoystickControls: FC<{api: KeyboardAPI | null}> = ({api}) => {
+  const {t} = useTranslation();
   const [leftPos, setLeftPos] = useState<JoystickPosition>({x: 0, y: 0});
   const [rightPos, setRightPos] = useState<JoystickPosition>({x: 0, y: 0});
   const [connected, setConnected] = useState(false);
-  const [modeStatus, setModeStatus] = useState<string>('');
+  const [modeStatus, setModeStatus] = useState<
+    string | {key: string; left: number; right: number}
+  >('');
   const [leftSens, setLeftSens] = useState(128);
   const [rightSens, setRightSens] = useState(128);
   const [curves, setCurves] = useState<Record<JoystickSide, number[] | null>>({
@@ -334,9 +343,11 @@ const JoystickControls: FC<{api: KeyboardAPI | null}> = ({api}) => {
         prevLeftModeRef.current = leftMode;
         prevRightModeRef.current = rightMode;
 
-        setModeStatus(
-          `Previous modes — Left: ${getModeName(leftMode)}, Right: ${getModeName(rightMode)}. Switching to Mouse mode...`,
-        );
+        setModeStatus({
+          key: 'Previous modes — Left: {{left}}, Right: {{right}}. Switching to Mouse mode...',
+          left: leftMode,
+          right: rightMode,
+        });
 
         if (leftMode !== MOUSE_MODE) {
           await api.setCustomMenuValue(
@@ -375,9 +386,11 @@ const JoystickControls: FC<{api: KeyboardAPI | null}> = ({api}) => {
           setRightSens(rSensRes[1]);
           setSensKnown({left: true, right: true});
           setConnected(true);
-          setModeStatus(
-            `Both joysticks set to Mouse mode. Previous — Left: ${getModeName(leftMode)}, Right: ${getModeName(rightMode)}`,
-          );
+          setModeStatus({
+            key: 'Both joysticks set to Mouse mode. Previous — Left: {{left}}, Right: {{right}}',
+            left: leftMode,
+            right: rightMode,
+          });
         }
       } catch (e) {
         console.error('Failed to set joystick modes:', e);
@@ -485,40 +498,51 @@ const JoystickControls: FC<{api: KeyboardAPI | null}> = ({api}) => {
 
   return (
     <JoystickPane>
-      <Title>Mouse Sensitivity</Title>
+      <Title>{t('Mouse Sensitivity')}</Title>
       <StatusBar>
         <span>
           <StatusDot $connected={connected} />
-          {connected ? 'Connected — joysticks in Mouse mode' : 'Connecting...'}
+          {t(
+            connected ? 'Connected — joysticks in Mouse mode' : 'Connecting...',
+          )}
         </span>
       </StatusBar>
       {modeStatus && (
-        <StatusBar style={{fontSize: 12, opacity: 0.6}}>{modeStatus}</StatusBar>
+        <StatusBar style={{fontSize: 12, opacity: 0.6}}>
+          {typeof modeStatus === 'string'
+            ? t(modeStatus)
+            : t(modeStatus.key, {
+                left: t(getModeName(modeStatus.left), {mode: modeStatus.left}),
+                right: t(getModeName(modeStatus.right), {
+                  mode: modeStatus.right,
+                }),
+              })}
+        </StatusBar>
       )}
-      {settingsError && <StatusBar role="alert">{settingsError}</StatusBar>}
-      {axesError && <StatusBar role="alert">{axesError}</StatusBar>}
+      {settingsError && <StatusBar role="alert">{t(settingsError)}</StatusBar>}
+      {axesError && <StatusBar role="alert">{t(axesError)}</StatusBar>}
       <JoystickContainer>
         <JoystickCircle
           position={leftPos}
-          label="Left Joystick"
+          label={t('Left Joystick')}
           curve={sensKnown.left && axesAvailable ? curves.left : null}
           sensitivity={leftSens}
         />
         <JoystickCircle
           position={rightPos}
-          label="Right Joystick"
+          label={t('Right Joystick')}
           curve={sensKnown.right && axesAvailable ? curves.right : null}
           sensitivity={rightSens}
         />
       </JoystickContainer>
       <SensContainer>
         <SensGroup>
-          <SensLabel>Left Sensitivity</SensLabel>
+          <SensLabel>{t('Left Sensitivity')}</SensLabel>
           <SensSlider
             type="range"
             min={20}
             max={255}
-            aria-label="Left mouse sensitivity"
+            aria-label={t('Left mouse sensitivity')}
             disabled={!connected}
             value={leftSens}
             onChange={(e) => handleSensChange('left', Number(e.target.value))}
@@ -526,12 +550,12 @@ const JoystickControls: FC<{api: KeyboardAPI | null}> = ({api}) => {
           <SensValue>{leftSens}</SensValue>
         </SensGroup>
         <SensGroup>
-          <SensLabel>Right Sensitivity</SensLabel>
+          <SensLabel>{t('Right Sensitivity')}</SensLabel>
           <SensSlider
             type="range"
             min={20}
             max={255}
-            aria-label="Right mouse sensitivity"
+            aria-label={t('Right mouse sensitivity')}
             disabled={!connected}
             value={rightSens}
             onChange={(e) => handleSensChange('right', Number(e.target.value))}
@@ -545,6 +569,7 @@ const JoystickControls: FC<{api: KeyboardAPI | null}> = ({api}) => {
   );
 };
 
+// Returns translation keys so language changes do not restart HID effects.
 function getModeName(mode: number): string {
   switch (mode) {
     case 0:
@@ -556,6 +581,6 @@ function getModeName(mode: number): string {
     case 3:
       return 'Gaming';
     default:
-      return `Unknown (${mode})`;
+      return 'Unknown ({{mode}})';
   }
 }

@@ -1,4 +1,20 @@
-# Joystick Mouse Mode tests
+# VIA tests
+
+## Interface language
+
+`language.test.ts` uses the real i18next engine and browser language detector.
+It checks saved-choice precedence, browser preference order, Chinese regional
+variants, English fallback, and OS Keyboard translations. All Chinese language
+variants currently use the existing Simplified Chinese (`zh`) translation.
+
+The UI language is independent of the host keyboard layout and never changes
+firmware settings. Use the A/文 icon in VIA's top bar to override detection;
+the choice is saved in the browser's `i18nextLng` localStorage entry.
+
+Local verification artifacts are in `.codex-logs/language/`: `build.log`,
+`tests.log`, `server.log`, `browser.log` (including any walkthrough stack traces),
+`walkthrough.json`, and screenshots. This directory is ignored by Git.
+On this checkout its absolute path is `C:\OS Keyboard\code\via\.codex-logs\language`.
 
 ## Hardware safety
 

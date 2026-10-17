@@ -119,6 +119,7 @@ const LanguageSelectors: React.FC<{
 };
 
 export const LanguageSelect: FC = () => {
+  const {t} = useTranslation();
   const [showList, setShowList] = useState(false);
   return (
     <Container>
@@ -126,7 +127,18 @@ export const LanguageSelect: FC = () => {
         <FontAwesomeIcon
           size={'xl'}
           icon={faLanguage}
+          role="button"
+          tabIndex={0}
+          aria-hidden={false}
+          aria-label={t('Interface language')}
+          aria-expanded={showList}
           onClick={() => setShowList(true)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              setShowList(true);
+            }
+          }}
         />
       </CategoryIconContainer>
       <LanguageSelectors
