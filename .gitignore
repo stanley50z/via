@@ -3,7 +3,10 @@
 .snowpack
 build
 node_modules
-public/definitions
+public/definitions/*
+!public/definitions/v3/
+public/definitions/v3/*
+!public/definitions/v3/1330839554.json
 dist
 dist-ssr
 .history

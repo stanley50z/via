@@ -1,7 +1,7 @@
 {
   "license": "GPL-3.0",
   "scripts": {
-    "dev": "node scripts/build-definitions.js && vite --force",
+    "dev": "bun run build:kbs && vite --force",
     "test": "node --import tsx --test tests/*.test.ts",
     "build": "bun run build:kbs && tsc && vite build",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",

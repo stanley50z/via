@@ -1,0 +1,1323 @@
+{
+  "name": "O2",
+  "vendorProductId": 1330839554,
+  "firmwareVersion": 1,
+  "menus": [
+    {
+      "label": "Joysticks",
+      "content": [
+        {
+          "label": "Mode Settings",
+          "content": [
+            {
+              "label": "Gaming Mode",
+              "type": "toggle",
+              "content": [
+                "id_gaming_enabled",
+                0,
+                8
+              ]
+            },
+            {
+              "label": "Disable Windows Key in Gaming Mode",
+              "type": "toggle",
+              "content": [
+                "id_gaming_disable_win",
+                0,
+                19
+              ]
+            },
+            {
+              "label": "Switch Mode Behavior",
+              "type": "dropdown",
+              "options": [
+                [
+                  "Toggle",
+                  0
+                ],
+                [
+                  "Hold",
+                  1
+                ]
+              ],
+              "content": [
+                "id_modeswitch_behavior",
+                0,
+                26
+              ]
+            },
+            {
+              "label": "SOCD Mode",
+              "type": "dropdown",
+              "options": [
+                [
+                  "OFF",
+                  0
+                ],
+                [
+                  "WASD",
+                  1
+                ],
+                [
+                  "ESDF",
+                  2
+                ]
+              ],
+              "content": [
+                "id_SOCD_mode",
+                0,
+                15
+              ]
+            },
+            {
+              "label": "8-way Keys",
+              "type": "dropdown",
+              "options": [
+                [
+                  "WASD",
+                  1
+                ],
+                [
+                  "ESDF",
+                  2
+                ]
+              ],
+              "content": [
+                "id_8way_mode",
+                0,
+                16
+              ]
+            },
+            {
+              "label": "Left Mouse Sensitivity",
+              "type": "range",
+              "options": [
+                67,
+                255
+              ],
+              "content": [
+                "id_Lmouse_sens",
+                0,
+                17
+              ]
+            },
+            {
+              "label": "Right Mouse Sensitivity",
+              "type": "range",
+              "options": [
+                67,
+                255
+              ],
+              "content": [
+                "id_Rmouse_sens",
+                0,
+                18
+              ]
+            },
+            {
+              "label": "Auto Mouse Timeout (0.3-4.0 seconds)",
+              "type": "range",
+              "options": [
+                3,
+                40
+              ],
+              "content": [
+                "id_auto_mouse_timeout",
+                0,
+                27
+              ]
+            },
+            {
+              "label": "Activation Threshold (%)",
+              "type": "range",
+              "options": [
+                15,
+                90
+              ],
+              "content": [
+                "id_joystick_key_threshold",
+                0,
+                21
+              ]
+            },
+            {
+              "label": "Joystick Key Alignment",
+              "type": "dropdown",
+              "options": [
+                [
+                  "Edge-aligned",
+                  0
+                ],
+                [
+                  "Center-aligned",
+                  1
+                ]
+              ],
+              "content": [
+                "id_joystick_align_center",
+                0,
+                20
+              ]
+            },
+            {
+              "label": "Left Joystick Mode",
+              "type": "dropdown",
+              "options": [
+                [
+                  "Controller Mode",
+                  0
+                ],
+                [
+                  "Keys Mode",
+                  1
+                ],
+                [
+                  "Mouse Mode",
+                  2
+                ],
+                [
+                  "8-way Mode",
+                  3
+                ]
+              ],
+              "content": [
+                "id_joystick_Lmode",
+                0,
+                1
+              ]
+            },
+            {
+              "label": "Right Joystick Mode",
+              "type": "dropdown",
+              "options": [
+                [
+                  "Controller Mode",
+                  0
+                ],
+                [
+                  "Keys Mode",
+                  1
+                ],
+                [
+                  "Mouse Mode",
+                  2
+                ]
+              ],
+              "content": [
+                "id_joystick_Rmode",
+                0,
+                2
+              ]
+            },
+            {
+              "label": "Recenter Joysticks",
+              "type": "button",
+              "options": [
+                10
+              ],
+              "content": [
+                "id_joystick_recenter",
+                0,
+                13
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Core Joystick Settings",
+          "content": [
+            {
+              "label": "Legacy Mode",
+              "type": "toggle",
+              "content": [
+                "id_is_legacy",
+                0,
+                24
+              ]
+            },
+            {
+              "label": "Left Joystick Key Count",
+              "type": "dropdown",
+              "options": [
+                [
+                  "1",
+                  1
+                ],
+                [
+                  "2",
+                  2
+                ],
+                [
+                  "3",
+                  3
+                ],
+                [
+                  "4",
+                  4
+                ]
+              ],
+              "content": [
+                "id_joystick_Lkeycount",
+                0,
+                3
+              ]
+            },
+            {
+              "label": "Right Joystick Key Count",
+              "type": "dropdown",
+              "options": [
+                [
+                  "1",
+                  1
+                ],
+                [
+                  "2",
+                  2
+                ],
+                [
+                  "3",
+                  3
+                ],
+                [
+                  "4",
+                  4
+                ]
+              ],
+              "content": [
+                "id_joystick_Rkeycount",
+                0,
+                4
+              ]
+            },
+            {
+              "label": "Left Joystick: Invert X Axis",
+              "type": "toggle",
+              "content": [
+                "id_joystick_LxFlip",
+                0,
+                9
+              ]
+            },
+            {
+              "label": "Left Joystick: Invert Y Axis",
+              "type": "toggle",
+              "content": [
+                "id_joystick_LyFlip",
+                0,
+                10
+              ]
+            },
+            {
+              "label": "Left Joystick: Swap Axes",
+              "type": "toggle",
+              "content": [
+                "id_joystick_Lxy_swap",
+                0,
+                22
+              ]
+            },
+            {
+              "label": "Right Joystick: Invert X Axis",
+              "type": "toggle",
+              "content": [
+                "id_joystick_RxFlip",
+                0,
+                11
+              ]
+            },
+            {
+              "label": "Right Joystick: Invert Y Axis",
+              "type": "toggle",
+              "content": [
+                "id_joystick_RyFlip",
+                0,
+                12
+              ]
+            },
+            {
+              "label": "Right Joystick: Swap Axes",
+              "type": "toggle",
+              "content": [
+                "id_joystick_Rxy_swap",
+                0,
+                23
+              ]
+            },
+            {
+              "label": "Restore Defaults",
+              "type": "button",
+              "options": [
+                10
+              ],
+              "content": [
+                "id_eeprom_default",
+                0,
+                25
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "qmk_rgblight"
+  ],
+  "keycodes": [],
+  "customKeycodes": [
+    {
+      "name": "Switch Mode",
+      "title": "Switch Mode using the configured Toggle or Hold behavior",
+      "shortName": "SWM"
+    },
+    {
+      "name": "Controller Button 0",
+      "title": "Xbox A",
+      "shortName": "A"
+    },
+    {
+      "name": "Controller Button 1",
+      "title": "Xbox B",
+      "shortName": "B"
+    },
+    {
+      "name": "Controller Button 2",
+      "title": "Xbox X",
+      "shortName": "X"
+    },
+    {
+      "name": "Controller Button 3",
+      "title": "Xbox Y",
+      "shortName": "Y"
+    },
+    {
+      "name": "Controller Button 4",
+      "title": "Xbox LB",
+      "shortName": "LB"
+    },
+    {
+      "name": "Controller Button 5",
+      "title": "Xbox RB",
+      "shortName": "RB"
+    },
+    {
+      "name": "Controller Button 6",
+      "title": "Xbox LT",
+      "shortName": "LT"
+    },
+    {
+      "name": "Controller Button 7",
+      "title": "Xbox RT",
+      "shortName": "RT"
+    },
+    {
+      "name": "Controller Button 8",
+      "title": "Xbox Back",
+      "shortName": "Back"
+    },
+    {
+      "name": "Controller Button 9",
+      "title": "Xbox Start",
+      "shortName": "Start"
+    },
+    {
+      "name": "Controller Button 10",
+      "title": "Xbox LS",
+      "shortName": "LS"
+    },
+    {
+      "name": "Controller Button 11",
+      "title": "Xbox RS",
+      "shortName": "RS"
+    },
+    {
+      "name": "Controller Button 12",
+      "title": "Xbox D-pad Up",
+      "shortName": "D-pad Up"
+    },
+    {
+      "name": "Controller Button 13",
+      "title": "Xbox D-pad Down",
+      "shortName": "D-pad Down"
+    },
+    {
+      "name": "Controller Button 14",
+      "title": "Xbox D-pad Left",
+      "shortName": "D-pad Left"
+    },
+    {
+      "name": "Controller Button 15",
+      "title": "Xbox D-pad Right",
+      "shortName": "D-pad Right"
+    },
+    {
+      "name": "Controller Button 16",
+      "title": "Xbox Guide",
+      "shortName": "Guide"
+    },
+    {
+      "name": "Controller Button 17",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_17"
+    },
+    {
+      "name": "Controller Button 18",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_18"
+    },
+    {
+      "name": "Controller Button 19",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_19"
+    },
+    {
+      "name": "Controller Button 20",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_20"
+    },
+    {
+      "name": "Controller Button 21",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_21"
+    },
+    {
+      "name": "Controller Button 22",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_22"
+    },
+    {
+      "name": "Controller Button 23",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_23"
+    },
+    {
+      "name": "Controller Button 24",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_24"
+    },
+    {
+      "name": "Controller Button 25",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_25"
+    },
+    {
+      "name": "Controller Button 26",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_26"
+    },
+    {
+      "name": "Controller Button 27",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_27"
+    },
+    {
+      "name": "Controller Button 28",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_28"
+    },
+    {
+      "name": "Controller Button 29",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_29"
+    },
+    {
+      "name": "Controller Button 30",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_30"
+    },
+    {
+      "name": "Controller Button 31",
+      "title": "No Xbox equivalent; sends no controller input",
+      "shortName": "JS_31"
+    }
+  ],
+  "matrix": {
+    "rows": 10,
+    "cols": 6
+  },
+  "layouts": {
+    "width": 13,
+    "height": 7.25,
+    "optionKeys": {},
+    "keys": [
+      {
+        "row": 0,
+        "col": 0,
+        "x": 0,
+        "y": 0,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 0,
+        "col": 1,
+        "x": 1,
+        "y": 0,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 0,
+        "col": 2,
+        "x": 2,
+        "y": 0,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 0,
+        "col": 3,
+        "x": 3,
+        "y": 0,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 0,
+        "col": 4,
+        "x": 4,
+        "y": 0,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 0,
+        "col": 5,
+        "x": 5,
+        "y": 0,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 5,
+        "col": 0,
+        "x": 7,
+        "y": 0,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 5,
+        "col": 1,
+        "x": 8,
+        "y": 0,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 5,
+        "col": 2,
+        "x": 9,
+        "y": 0,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 5,
+        "col": 3,
+        "x": 10,
+        "y": 0,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 5,
+        "col": 4,
+        "x": 11,
+        "y": 0,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 5,
+        "col": 5,
+        "x": 12,
+        "y": 0,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 1,
+        "col": 0,
+        "x": 0,
+        "y": 1,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 1,
+        "col": 1,
+        "x": 1,
+        "y": 1,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 1,
+        "col": 2,
+        "x": 2,
+        "y": 1,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 1,
+        "col": 3,
+        "x": 3,
+        "y": 1,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 1,
+        "col": 4,
+        "x": 4,
+        "y": 1,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 1,
+        "col": 5,
+        "x": 5,
+        "y": 1,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 6,
+        "col": 0,
+        "x": 7,
+        "y": 1,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 6,
+        "col": 1,
+        "x": 8,
+        "y": 1,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 6,
+        "col": 2,
+        "x": 9,
+        "y": 1,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 6,
+        "col": 3,
+        "x": 10,
+        "y": 1,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 6,
+        "col": 4,
+        "x": 11,
+        "y": 1,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 6,
+        "col": 5,
+        "x": 12,
+        "y": 1,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 2,
+        "col": 0,
+        "x": 0,
+        "y": 2,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 2,
+        "col": 1,
+        "x": 1,
+        "y": 2,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 2,
+        "col": 2,
+        "x": 2,
+        "y": 2,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 2,
+        "col": 3,
+        "x": 3,
+        "y": 2,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 2,
+        "col": 4,
+        "x": 4,
+        "y": 2,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 2,
+        "col": 5,
+        "x": 5,
+        "y": 2,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 7,
+        "col": 0,
+        "x": 7,
+        "y": 2,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 7,
+        "col": 1,
+        "x": 8,
+        "y": 2,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 7,
+        "col": 2,
+        "x": 9,
+        "y": 2,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 7,
+        "col": 3,
+        "x": 10,
+        "y": 2,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 7,
+        "col": 4,
+        "x": 11,
+        "y": 2,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 7,
+        "col": 5,
+        "x": 12,
+        "y": 2,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 3,
+        "col": 0,
+        "x": 0,
+        "y": 3,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 3,
+        "col": 1,
+        "x": 1,
+        "y": 3,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 3,
+        "col": 2,
+        "x": 2,
+        "y": 3,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 3,
+        "col": 3,
+        "x": 3,
+        "y": 3,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 3,
+        "col": 4,
+        "x": 4,
+        "y": 3,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 3,
+        "col": 5,
+        "x": 5,
+        "y": 3,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 8,
+        "col": 0,
+        "x": 7,
+        "y": 3,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 8,
+        "col": 1,
+        "x": 8,
+        "y": 3,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 8,
+        "col": 2,
+        "x": 9,
+        "y": 3,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 8,
+        "col": 3,
+        "x": 10,
+        "y": 3,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 8,
+        "col": 4,
+        "x": 11,
+        "y": 3,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 8,
+        "col": 5,
+        "x": 12,
+        "y": 3,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 4,
+        "col": 0,
+        "x": 2,
+        "y": 4.25,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 9,
+        "col": 0,
+        "x": 10,
+        "y": 4.25,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 4,
+        "col": 3,
+        "x": 1,
+        "y": 5.25,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 4,
+        "col": 4,
+        "x": 2,
+        "y": 5.25,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 4,
+        "col": 1,
+        "x": 3,
+        "y": 5.25,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 4,
+        "col": 5,
+        "x": 5,
+        "y": 5.25,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 9,
+        "col": 5,
+        "x": 7,
+        "y": 5.25,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 9,
+        "col": 3,
+        "x": 9,
+        "y": 5.25,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 9,
+        "col": 4,
+        "x": 10,
+        "y": 5.25,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 9,
+        "col": 1,
+        "x": 11,
+        "y": 5.25,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 4,
+        "col": 2,
+        "x": 2,
+        "y": 6.25,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      },
+      {
+        "row": 9,
+        "col": 2,
+        "x": 10,
+        "y": 6.25,
+        "r": 0,
+        "rx": 0,
+        "ry": 0,
+        "d": false,
+        "h": 1,
+        "w": 1,
+        "color": "alpha"
+      }
+    ]
+  }
+}
