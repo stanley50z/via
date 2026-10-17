@@ -398,7 +398,7 @@
   "Linear": "线性",
   "Constant 1:1 mapping": "恒定的 1:1 映射",
   "QMK Default": "QMK 默认",
-  "Moderate acceleration curve": "适度加速曲线",
+  "Original O2 response (8-point approximation)": "O2 原始响应（8 点近似）",
   "Exponential": "指数",
   "Slow start, fast finish": "起步慢，末端快",
   "Precision": "精细控制",

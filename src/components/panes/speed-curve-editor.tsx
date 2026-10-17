@@ -45,14 +45,13 @@ const linearPoints = (): CurvePoint[] =>
     return {x: t, y: t};
   });
 
+// Fitted to O2's pre-curve weights and current fixed-point pointer reports.
+// Keep these bytes aligned with firmware startup and EEPROM defaults; see
+// docs/joystick-default-response.md for the baseline and measured error.
 const qmkDefaultPoints = (): CurvePoint[] => {
-  // QMK's default mouse driver uses a stepped acceleration:
-  // slow ramp at beginning, then faster acceleration at higher deflections
-  const xs = Array.from(
-    {length: CURVE_POINT_COUNT},
-    (_, i) => i / (CURVE_POINT_COUNT - 1),
-  );
-  return xs.map((x) => ({x, y: Math.pow(x, 1.6)}));
+  const xs = [0, 38, 67, 162, 207, 224, 239, 255];
+  const ys = [0, 46, 57, 69, 120, 160, 200, 255];
+  return xs.map((x, i) => ({x: x / 255, y: ys[i] / 255}));
 };
 
 const exponentialPoints = (): CurvePoint[] => {
@@ -99,7 +98,7 @@ export const PRESETS: CurvePreset[] = [
   {name: 'Linear', description: 'Constant 1:1 mapping', points: linearPoints()},
   {
     name: 'QMK Default',
-    description: 'Moderate acceleration curve',
+    description: 'Original O2 response (8-point approximation)',
     points: qmkDefaultPoints(),
   },
   {
@@ -352,11 +351,10 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({
 }) => {
   const {t} = useTranslation();
   const [side, setSide] = useState<JoystickSide>('left');
-  const [leftPoints, setLeftPoints] = useState<CurvePoint[]>(PRESETS[0].points);
+  const [leftPoints, setLeftPoints] = useState<CurvePoint[]>(PRESETS[1].points);
   const [rightPoints, setRightPoints] = useState<CurvePoint[]>(
-    PRESETS[0].points,
+    PRESETS[1].points,
   );
-  const [activePreset, setActivePreset] = useState<string>('Linear');
   const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
   const [saveStatus, setSaveStatus] = useState<string>('');
   const [saving, setSaving] = useState(false);
@@ -399,7 +397,6 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({
         if (cancelled) return;
         if (side === 'left') {
           setLeftPoints(points);
-          matchPreset(points);
         } else {
           setRightPoints(points);
         }
@@ -421,29 +418,25 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({
     };
   }, [api, onCurveApplied]);
 
-  // Match current points to a preset name
-  const matchPreset = useCallback((pts: CurvePoint[]) => {
-    for (const preset of PRESETS) {
-      const match = preset.points.every(
-        (p, i) =>
-          pts[i] &&
-          Math.abs(p.x - pts[i].x) < 0.01 &&
-          Math.abs(p.y - pts[i].y) < 0.02,
-      );
-      if (match) {
-        setActivePreset(preset.name);
-        return;
-      }
-    }
-    setActivePreset('Custom');
-  }, []);
+  // Derive the label from the visible side, including firmware-loaded curves.
+  const activePreset = useMemo(
+    () =>
+      PRESETS.find((preset) =>
+        preset.points.every(
+          (p, i) =>
+            points[i] &&
+            Math.abs(p.x - points[i].x) < 0.01 &&
+            Math.abs(p.y - points[i].y) < 0.02,
+        ),
+      )?.name ?? 'Custom',
+    [points],
+  );
 
   // Apply a preset
   const applyPreset = useCallback(
     (preset: CurvePreset) => {
       const newPts = preset.points.map((p) => ({...p}));
       setPoints(newPts);
-      setActivePreset(preset.name);
     },
     [setPoints],
   );
@@ -512,11 +505,8 @@ export const SpeedCurveEditor: FC<SpeedCurveEditorProps> = ({
   const handlePointerUp = useCallback(() => {
     if (draggingIdx !== null) {
       setDraggingIdx(null);
-      setActivePreset('Custom');
-      // Re-check if it matches a preset
-      matchPreset(points);
     }
-  }, [draggingIdx, points, matchPreset]);
+  }, [draggingIdx]);
 
   const handlePointerLeave = useCallback(() => {
     setHoverInfo(null);

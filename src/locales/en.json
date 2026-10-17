@@ -398,7 +398,7 @@
   "Linear": "Linear",
   "Constant 1:1 mapping": "Constant 1:1 mapping",
   "QMK Default": "QMK Default",
-  "Moderate acceleration curve": "Moderate acceleration curve",
+  "Original O2 response (8-point approximation)": "Original O2 response (8-point approximation)",
   "Exponential": "Exponential",
   "Slow start, fast finish": "Slow start, fast finish",
   "Precision": "Precision",
