@@ -4,8 +4,13 @@ import path from 'path';
 import {splitVendorChunkPlugin} from 'vite';
 import {createHtmlPlugin} from 'vite-plugin-html';
 import fs from 'fs';
+import {createHash} from 'crypto';
 
-const hash = fs.readFileSync('public/definitions/hash.json', 'utf8');
+// Invalidate cached definitions when either the upstream bundle or local O2 asset changes.
+const hash = createHash('sha256')
+  .update(fs.readFileSync('public/definitions/hash.json'))
+  .update(fs.readFileSync('public/definitions/v3/1330839554.json'))
+  .digest('hex');
 
 // https://vitejs.dev/config/
 export default defineConfig({

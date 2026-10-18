@@ -13,6 +13,7 @@ import {
   IKeycodeMenu,
   categoriesForKeycodeModule,
   getQMKLightingKeycodes,
+  getCustomKeycodes,
 } from '../../../utils/key';
 import {ErrorMessage} from '../../styled';
 import {
@@ -357,15 +358,7 @@ export const KeycodePane: FC = () => {
         }
         return (
           <KeycodeList>
-            {selectedDefinition.customKeycodes.map((keycode, idx) => {
-              return renderKeycode(
-                {
-                  ...keycode,
-                  code: `CUSTOM(${idx})`,
-                },
-                idx,
-              );
-            })}
+            {getCustomKeycodes(selectedDefinition).map(renderKeycode)}
           </KeycodeList>
         );
       }
