@@ -25,164 +25,164 @@
          "shortName": "SWM"
         },
         {
-          "name": "Controller Button 0",
+          "name": "A",
           "title": "Xbox A",
           "shortName": "A"
         },
         {
-          "name": "Controller Button 1",
+          "name": "B",
           "title": "Xbox B",
           "shortName": "B"
         },
         {
-          "name": "Controller Button 2",
+          "name": "X",
           "title": "Xbox X",
           "shortName": "X"
         },
         {
-          "name": "Controller Button 3",
+          "name": "Y",
           "title": "Xbox Y",
           "shortName": "Y"
         },
         {
-          "name": "Controller Button 4",
+          "name": "LB",
           "title": "Xbox LB",
           "shortName": "LB"
         },
         {
-          "name": "Controller Button 5",
+          "name": "RB",
           "title": "Xbox RB",
           "shortName": "RB"
         },
         {
-          "name": "Controller Button 6",
+          "name": "LT",
           "title": "Xbox LT",
           "shortName": "LT"
         },
         {
-          "name": "Controller Button 7",
+          "name": "RT",
           "title": "Xbox RT",
           "shortName": "RT"
         },
         {
-          "name": "Controller Button 8",
+          "name": "Back",
           "title": "Xbox Back",
           "shortName": "Back"
         },
         {
-          "name": "Controller Button 9",
+          "name": "Start",
           "title": "Xbox Start",
           "shortName": "Start"
         },
         {
-          "name": "Controller Button 10",
-          "title": "Xbox LS",
-          "shortName": "LS"
+          "name": "L3",
+          "title": "Xbox L3 (left Joystick Down)",
+          "shortName": "L3"
         },
         {
-          "name": "Controller Button 11",
-          "title": "Xbox RS",
-          "shortName": "RS"
+          "name": "R3",
+          "title": "Xbox R3 (right Joystick Down)",
+          "shortName": "R3"
         },
         {
-          "name": "Controller Button 12",
+          "name": "D-pad Up",
           "title": "Xbox D-pad Up",
           "shortName": "D-pad Up"
         },
         {
-          "name": "Controller Button 13",
+          "name": "D-pad Down",
           "title": "Xbox D-pad Down",
           "shortName": "D-pad Down"
         },
         {
-          "name": "Controller Button 14",
+          "name": "D-pad Left",
           "title": "Xbox D-pad Left",
           "shortName": "D-pad Left"
         },
         {
-          "name": "Controller Button 15",
+          "name": "D-pad Right",
           "title": "Xbox D-pad Right",
           "shortName": "D-pad Right"
         },
         {
-          "name": "Controller Button 16",
+          "name": "Guide",
           "title": "Xbox Guide",
           "shortName": "Guide"
         },
         {
-          "name": "Controller Button 17",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_17"
+          "shortName": "No input"
         },
         {
-          "name": "Controller Button 18",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_18"
+          "shortName": "No input"
         },
         {
-          "name": "Controller Button 19",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_19"
+          "shortName": "No input"
         },
         {
-          "name": "Controller Button 20",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_20"
+          "shortName": "No input"
         },
         {
-          "name": "Controller Button 21",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_21"
+          "shortName": "No input"
         },
         {
-          "name": "Controller Button 22",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_22"
+          "shortName": "No input"
         },
         {
-          "name": "Controller Button 23",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_23"
+          "shortName": "No input"
         },
         {
-          "name": "Controller Button 24",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_24"
+          "shortName": "No input"
         },
         {
-          "name": "Controller Button 25",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_25"
+          "shortName": "No input"
         },
         {
-          "name": "Controller Button 26",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_26"
+          "shortName": "No input"
         },
         {
-          "name": "Controller Button 27",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_27"
+          "shortName": "No input"
         },
         {
-          "name": "Controller Button 28",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_28"
+          "shortName": "No input"
         },
         {
-          "name": "Controller Button 29",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_29"
+          "shortName": "No input"
         },
         {
-          "name": "Controller Button 30",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_30"
+          "shortName": "No input"
         },
         {
-          "name": "Controller Button 31",
+          "name": "No input",
           "title": "No Xbox equivalent; sends no controller input",
-          "shortName": "JS_31"
+          "shortName": "No input"
         }
     ],
     "menus": [

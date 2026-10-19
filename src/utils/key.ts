@@ -1121,6 +1121,25 @@ export const categoriesForKeycodeModule = (
     [BuiltInKeycodeModule.QMKBacklightRGBLightKeycodes]: ['qmk_lighting'],
   })[keycodeModule];
 
+// Keeps definition keycodes positional and adds O2 shortcuts using the native Any-key codes.
+export const getCustomKeycodes = (
+  definition: VIADefinitionV2 | VIADefinitionV3,
+): IKeycode[] => {
+  const keycodes = (definition.customKeycodes ?? []).map((keycode, index) => ({
+    ...keycode,
+    code: `CUSTOM(${index})`,
+  }));
+  // O2: USB vendor 0x4F53, product 0x0002.
+  if (definition.vendorProductId === 0x4f530002) {
+    return [
+      ...keycodes,
+      {name: 'MO(10)', code: 'MO(10)', title: 'Hold to activate layer 10'},
+      {name: 'TO(10)', code: 'TO(10)', title: 'Switch to layer 10'},
+    ];
+  }
+  return keycodes;
+};
+
 export const getQMKLightingKeycodes = (
   definition: VIADefinitionV3 | VIADefinitionV2,
   protocol: number,
